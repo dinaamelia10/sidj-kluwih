@@ -1,202 +1,287 @@
 ﻿@extends('admin.layout.master')
 
 @section('content')
-    <!-- Header & Action -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
-        <div>
-            <h2 class="font-headline-lg text-headline-lg text-on-surface">Data Petani</h2>
-            <p class="font-body-md text-body-md text-on-surface-variant">Kelola basis data mitra petani di wilayah Kluwih secara real-time.</p>
+<!-- Welcome Banner -->
+<section class="relative overflow-hidden rounded-card bg-primary p-xl text-on-primary flex flex-col md:flex-row justify-between items-center gap-8 shadow-xl shadow-primary/10">
+    <div class="relative z-10 text-center md:text-left space-y-4">
+        <h2 class="text-3xl font-black tracking-tight">Selamat datang kembali, {{ auth()->user()->name }}</h2>
+        <p class="text-lg text-primary-fixed opacity-90 max-w-md">Sistem Smart Dryer berjalan pada kapasitas optimal.</p>
+        <div class="pt-4 flex flex-wrap justify-center md:justify-start gap-4">
+            <button class="px-8 py-3 bg-white text-primary rounded-xl font-bold text-label-md hover:bg-opacity-90 transition-all shadow-lg shadow-black/5">Unduh Laporan</button>
+            <button class="px-8 py-3 bg-white/20 text-white border border-white/30 rounded-xl font-bold text-label-md hover:bg-white/30 transition-all backdrop-blur-sm">Lihat Peringatan</button>
         </div>
-        <button class="bg-primary-container text-white px-lg py-md rounded-xxl font-label-md flex items-center gap-2 hover:bg-primary transition-all shadow-md active:scale-95">
-            <span class="material-symbols-outlined">person_add</span>
-            Tambah Petani Baru
+    </div>
+    <div class="relative w-full md:w-2/5 flex justify-center">
+        <img class="h-56 md:h-64 object-contain" data-alt="Ilustrasi sistem pengering jagung pintar modern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDymiH7TdgxUiggd1QulpfnU9hQ6zFijUt8TN42F-v294Qs-O4ZNzyaQBVkUUJm9PeuR6_4OnZyEHw1lkuWxUBHDuVHJd2kzs7Q5Sv8jSvu74F0aALBBr74rsOy0KDaPRsla-2xzLBAycBlTOsb-0oCmjpuUMMh423OXCX0eJlNd7U6E2UyA2P1R8TzO0-9Mp0IcwOgqeE3QaWimGfOQZcbGu1eI80XpKqiO8fIDXRjhMQTUwGLWF2GMQ"/>
+    </div>
+</section>
+
+<!-- Notification Section -->
+@if($showNotification)
+<div class="p-lg bg-orange-50 border-l-4 border-l-orange-500 text-orange-900 rounded-[20px] shadow-md flex items-start gap-4 transition-all">
+    <span class="material-symbols-outlined text-orange-600 text-2xl">warning</span>
+    <div>
+        <h4 class="font-bold text-base">Instruksi Pembalikan Jagung</h4>
+        <p class="text-label-md mt-1 opacity-90">{{ $notificationMessage }}</p>
+    </div>
+</div>
+@endif
+
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+    <!-- Current Temperature -->
+    <div class="soft-card p-lg border-l-4 border-l-orange-500 bg-white border border-black/5 rounded-[20px] shadow-md">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-label-md font-medium text-on-surface-variant">Suhu Saat Ini</span>
+                <div class="text-3xl font-black text-on-surface">{{ $currentTemperature }}°C</div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600">
+                <span class="material-symbols-outlined text-2xl">thermostat</span>
+            </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span>Rentang Optimal</span>
+        </div>
+    </div>
+    <!-- Price -->
+    <div class="soft-card p-lg border-l-4 border-l-primary bg-white border border-black/5 rounded-[20px] shadow-md">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-label-md font-medium text-on-surface-variant">Harga Pasar</span>
+                <div class="text-3xl font-black text-on-surface">Rp {{ $marketPrice }}<span class="text-sm font-normal text-outline ml-1">/kg</span></div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-secondary">
+                <span class="material-symbols-outlined text-2xl">payments</span>
+            </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-outline font-bold text-xs uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">history</span>
+            <span>Diperbarui: {{ $priceUpdatedTime }}</span>
+        </div>
+    </div>
+    <!-- Farmers -->
+    <div class="soft-card p-lg border-l-4 border-l-tertiary bg-white border border-black/5 rounded-[20px] shadow-md">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-label-md font-medium text-on-surface-variant">Total Petani</span>
+                <div class="text-3xl font-black text-on-surface">{{ $totalFarmers }}<span class="text-sm font-normal text-outline ml-1">petani</span></div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-tertiary-fixed flex items-center justify-center text-tertiary">
+                <span class="material-symbols-outlined text-2xl">groups</span>
+            </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">person_add</span>
+            <span>+{{ $farmersThisWeek }} minggu ini</span>
+        </div>
+    </div>
+    <!-- Tonnage -->
+    <div class="soft-card p-lg border-l-4 border-l-secondary bg-white border border-black/5 rounded-[20px] shadow-md">
+        <div class="flex justify-between items-start">
+            <div class="space-y-1">
+                <span class="text-label-md font-medium text-on-surface-variant">Total Tonase</span>
+                <div class="text-3xl font-black text-on-surface">{{ $totalTonnageFormatted }}<span class="text-sm font-normal text-outline ml-1">MT</span></div>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-secondary-container flex items-center justify-center text-on-secondary-container">
+                <span class="material-symbols-outlined text-2xl">weight</span>
+            </div>
+        </div>
+        <div class="mt-6 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[18px]">trending_up</span>
+            <span>{{ $momGrowthFormatted }}</span>
+        </div>
+    </div>
+</section>
+
+<!-- Charts and Data -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+    <!-- Progress Chart -->
+    <div class="lg:col-span-2 bg-white border border-black/5 rounded-[20px] shadow-md p-xl flex flex-col">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-xl gap-4">
+            <div>
+                <h3 class="text-xl font-bold text-on-surface">Kurva Pemrosesan Batch</h3>
+                <p class="text-label-md text-outline mt-1">Penurunan kadar air untuk antrean aktif</p>
+            </div>
+            <!-- Menggunakan Nama Petani Aktif Secara Dinamis -->
+            <div class="px-4 py-1.5 bg-primary/10 text-primary rounded-full font-bold text-xs">
+                Aktif: {{ $activeFarmerName }}
+            </div>
+        </div>
+        <div class="flex-1 min-h-[350px]">
+            <canvas id="moistureChart"></canvas>
+        </div>
+    </div>
+    <!-- Central Monitoring Section -->
+    <div class="bg-white border border-black/5 rounded-[20px] shadow-md p-xl flex flex-col gap-lg">
+        <h3 class="text-xl font-bold text-on-surface">Status Mesin</h3>
+        <div class="flex-1 flex flex-col justify-center items-center py-8 space-y-8">
+            <!-- Gauge Simulation -->
+            <div class="relative w-56 h-56 flex items-center justify-center">
+                <svg class="w-full h-full transform -rotate-90">
+                    <circle class="text-surface-container" cx="112" cy="112" fill="transparent" r="95" stroke="currentColor" stroke-width="14"></circle>
+                    @php
+                        $percentage = max(0, min(100, $currentMoisture));
+                        $dashoffset = 597 - (597 * $percentage / 100);
+                    @endphp
+                    <circle class="text-primary" cx="112" cy="112" fill="transparent" r="95" stroke="currentColor" stroke-dasharray="597" stroke-dashoffset="{{ $dashoffset }}" stroke-linecap="round" stroke-width="14"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span class="text-4xl font-black text-on-surface">{{ $currentMoisture }}%</span>
+                    <span class="text-[10px] text-outline font-black uppercase tracking-[0.2em] mt-1">Kelembaban</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <div class="p-5 bg-surface-container-low rounded-2xl text-center border border-outline-variant/30">
+                    <p class="text-xs font-bold text-outline mb-2 uppercase tracking-wider">Suhu</p>
+                    <p class="text-xl font-black text-on-surface">{{ $currentTemperature }}°C</p>
+                </div>
+                <div class="p-5 bg-surface-container-low rounded-2xl text-center border border-outline-variant/30">
+                    <p class="text-xs font-bold text-outline mb-2 uppercase tracking-wider">Kipas</p>
+                    <!-- Menggunakan Kecepatan Kipas Dinamis -->
+                    <p class="text-xl font-black text-on-surface">{{ $currentFanSpeed }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-auto p-6 bg-primary/5 rounded-2xl border border-primary/10">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined">memory</span>
+                </div>
+                <div>
+                    <p class="text-label-md font-black text-on-surface">Unit Pintar 01</p>
+                    <p class="text-xs text-primary font-bold">Siklus Pemanasan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions Table -->
+<section class="bg-white border border-black/5 rounded-[20px] shadow-md overflow-hidden">
+    <div class="px-xl py-lg border-b border-outline-variant/50 flex justify-between items-center bg-white">
+        <h3 class="text-xl font-bold text-on-surface">Transaksi & Log Terbaru</h3>
+        <button class="text-primary font-bold text-label-md hover:underline flex items-center gap-1">
+            Semua Log <span class="material-symbols-outlined text-sm">arrow_forward_ios</span>
         </button>
     </div>
-    <!-- Summary Bento Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
-        <!-- Card 1 -->
-        <div class="bento-card p-lg rounded-xxl relative overflow-hidden group">
-            <div class="flex flex-col">
-                <span class="font-label-md text-label-md text-on-surface-variant mb-1">Total Petani Terdaftar</span>
-                <span class="font-display text-display text-primary">1,284</span>
-                <div class="mt-4 flex items-center gap-1 text-on-secondary-container bg-secondary-container/30 px-2 py-1 rounded-full w-fit">
-                    <span class="material-symbols-outlined text-[16px]">trending_up</span>
-                    <span class="font-label-sm text-label-sm">+12% dari bulan lalu</span>
-                </div>
-            </div>
-            <div class="absolute top-lg right-lg w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">groups</span>
-            </div>
-        </div>
-        <!-- Card 2 -->
-        <div class="bento-card p-lg rounded-xxl relative overflow-hidden group">
-            <div class="flex flex-col">
-                <span class="font-label-md text-label-md text-on-surface-variant mb-1">Petani Aktif Bulan Ini</span>
-                <span class="font-display text-display text-tertiary">942</span>
-                <div class="mt-4 flex items-center gap-1 text-on-surface-variant bg-surface-container px-2 py-1 rounded-full w-fit">
-                    <span class="material-symbols-outlined text-[16px]">sync</span>
-                    <span class="font-label-sm text-label-sm">73.4% Aktivitas</span>
-                </div>
-            </div>
-            <div class="absolute top-lg right-lg w-10 h-10 rounded-full bg-tertiary-fixed-dim flex items-center justify-center text-tertiary">
-                <span class="material-symbols-outlined">monitoring</span>
-            </div>
-        </div>
-        <!-- Card 3 -->
-        <div class="bento-card p-lg rounded-xxl relative overflow-hidden group">
-            <div class="flex flex-col">
-                <span class="font-label-md text-label-md text-on-surface-variant mb-1">Wilayah Terluas</span>
-                <span class="font-headline-md text-headline-md text-on-surface mt-1">Kluwih Selatan</span>
-                <span class="font-body-md text-body-md text-on-surface-variant">420.5 Hektar</span>
-            </div>
-            <div class="absolute top-lg right-lg w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">map</span>
-            </div>
-            <div class="mt-4 h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
-                <div class="h-full bg-primary-container w-[65%] rounded-full"></div>
-            </div>
-        </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left mobile-table-card">
+            <thead class="bg-surface-container-low/50 text-on-surface-variant">
+                <tr>
+                    <th class="px-xl py-5 text-[11px] font-black uppercase tracking-widest">Nama Petani</th>
+                    <th class="px-xl py-5 text-[11px] font-black uppercase tracking-widest">Tonase</th>
+                    <th class="px-xl py-5 text-[11px] font-black uppercase tracking-widest">Waktu Masuk</th>
+                    <th class="px-xl py-5 text-[11px] font-black uppercase tracking-widest">Status</th>
+                    <th class="px-xl py-5 text-[11px] font-black uppercase tracking-widest text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/30">
+                @forelse($recentTransactions as $transaction)
+                <tr class="hover:bg-surface-container-low/30 transition-colors">
+                    <td class="px-xl py-6 font-bold text-on-surface" data-label="Nama Petani">{{ $transaction->farmer_name }}</td>
+                    <td class="px-xl py-6 text-on-surface-variant" data-label="Tonase">{{ $transaction->tonnage }} MT</td>
+                    <td class="px-xl py-6 text-on-surface-variant" data-label="Waktu Masuk">{{ $transaction->created_at->format('H:i A') }}</td>
+                    <td class="px-xl py-6" data-label="Status">
+                        @if($transaction->status === 'Proses')
+                        <span class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 text-[11px] font-black uppercase px-4 py-1.5 rounded-full border border-amber-200">
+                            <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
+                            Proses
+                        </span>
+                        @else
+                        <span class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-[11px] font-black uppercase px-4 py-1.5 rounded-full border border-emerald-200">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                            Selesai
+                        </span>
+                        @endif
+                    </td>
+                    <td class="px-xl py-6 text-center" data-label="Aksi">
+                        <button class="text-outline hover:text-primary material-symbols-outlined p-2 hover:bg-primary/10 rounded-xl transition-all">visibility</button>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="px-xl py-6 text-center text-outline font-medium">Belum ada log transaksi hari ini.</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
-    <!-- Database Table Section -->
-    <div class="bento-card rounded-xxl overflow-hidden bg-white">
-        <!-- Filter Header -->
-        <div class="p-lg border-b border-outline-variant flex flex-col lg:flex-row justify-between gap-lg items-center">
-            <h3 class="font-title-lg text-title-lg text-on-surface">Database Petani</h3>
-            <div class="flex flex-wrap items-center gap-md w-full lg:w-auto">
-                <div class="flex-1 lg:flex-none">
-                    <select class="w-full bg-surface-container-low border-outline-variant rounded-xl font-label-md py-2 px-4 focus:ring-primary focus:border-primary">
-                        <option value="">Semua Wilayah</option>
-                        <option>Kluwih Utara</option>
-                        <option>Kluwih Selatan</option>
-                        <option>Kluwih Barat</option>
-                        <option>Kluwih Timur</option>
-                    </select>
-                </div>
-                <div class="flex-1 lg:flex-none">
-                    <select class="w-full bg-surface-container-low border-outline-variant rounded-xl font-label-md py-2 px-4 focus:ring-primary focus:border-primary">
-                        <option value="">Semua Komoditas</option>
-                        <option>Jagung Hibrida</option>
-                        <option>Jagung Manis</option>
-                        <option>Kedelai</option>
-                    </select>
-                </div>
-                <button class="p-2 border border-outline-variant rounded-xl hover:bg-surface-container-low transition-colors">
-                    <span class="material-symbols-outlined">tune</span>
-                </button>
-            </div>
-        </div>
-        <!-- Table Content -->
-        <div class="overflow-x-auto w-full">
-            <table class="w-full text-left border-collapse" style="min-width: 800px;">
-                <thead class="bg-surface-container-low">
-                    <tr>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">ID Petani</th>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Nama Petani</th>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Lokasi/Wilayah</th>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Luas Lahan (Ha)</th>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant">Komoditas</th>
-                        <th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant border-b border-outline-variant text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant">
-                    <!-- Row 1 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface font-medium">PKL-001</td>
-                        <td class="px-lg py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center font-bold text-on-secondary-container">S</div>
-                                <span class="font-body-md text-body-md text-on-surface">Sugeng Raharjo</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface-variant">Kluwih Selatan</td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface">2.5 Ha</td>
-                        <td class="px-lg py-4">
-                            <span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap">Jagung Hibrida</span>
-                        </td>
-                        <td class="px-lg py-4 text-right flex items-center justify-end gap-3 whitespace-nowrap">
-                            <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                        </td>
-                    </tr>
-                    <!-- Row 2 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface font-medium">PKL-002</td>
-                        <td class="px-lg py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-tertiary-fixed-dim flex items-center justify-center font-bold text-on-tertiary-fixed-variant">A</div>
-                                <span class="font-body-md text-body-md text-on-surface">Aminah Wijaya</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface-variant">Kluwih Utara</td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface">1.8 Ha</td>
-                        <td class="px-lg py-4">
-                            <span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap">Jagung Manis</span>
-                        </td>
-                        <td class="px-lg py-4 text-right flex items-center justify-end gap-3 whitespace-nowrap">
-                            <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                        </td>
-                    </tr>
-                    <!-- Row 3 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface font-medium">PKL-003</td>
-                        <td class="px-lg py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center font-bold text-on-primary-fixed-variant">B</div>
-                                <span class="font-body-md text-body-md text-on-surface">Bambang S.</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface-variant">Kluwih Timur</td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface">4.2 Ha</td>
-                        <td class="px-lg py-4">
-                            <span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap">Jagung Hibrida</span>
-                        </td>
-                        <td class="px-lg py-4 text-right flex items-center justify-end gap-3 whitespace-nowrap">
-                            <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                        </td>
-                    </tr>
-                    <!-- Row 4 -->
-                    <tr class="hover:bg-surface-container-low transition-colors group">
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface font-medium">PKL-004</td>
-                        <td class="px-lg py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-surface-dim flex items-center justify-center font-bold text-on-surface">R</div>
-                                <span class="font-body-md text-body-md text-on-surface">Ratna Sari</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface-variant">Kluwih Barat</td>
-                        <td class="px-lg py-4 font-body-md text-body-md text-on-surface">0.9 Ha</td>
-                        <td class="px-lg py-4">
-                            <span class="bg-outline-variant text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm whitespace-nowrap">Kedelai</span>
-                        </td>
-                        <td class="px-lg py-4 text-right flex items-center justify-end gap-3 whitespace-nowrap">
-                            <button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">visibility</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Pagination -->
-        <div class="p-lg flex items-center justify-between border-t border-outline-variant">
-            <span class="font-label-md text-label-md text-on-surface-variant">Menampilkan 1-4 dari 1,284 petani</span>
-            <div class="flex items-center gap-sm">
-                <button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container transition-colors disabled:opacity-50" disabled="">
-                    <span class="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button class="w-10 h-10 bg-primary-container text-white rounded-lg font-bold font-label-md">1</button>
-                <button class="w-10 h-10 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all">2</button>
-                <button class="w-10 h-10 border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all">3</button>
-                <button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container transition-colors">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Visualization Overlay (Agro-Modernist Detail) -->
+</section>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('moistureChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($chartLabels) !!},
+            datasets: [{
+                label: 'Kadar Air (%)',
+                data: {!! json_encode($chartMoistureData) !!},
+                borderColor: '#0d631b',
+                backgroundColor: 'rgba(13, 99, 27, 0.05)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 4,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#0d631b',
+                pointBorderWidth: 3,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointHoverBorderWidth: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#111c2d',
+                    padding: 12,
+                    titleFont: { family: 'Inter', size: 13, weight: '700' },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    cornerRadius: 12,
+                    displayColors: false,
+                    callbacks: {
+                        label: (item) => `Kadar Air: ${item.formattedValue}%`
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    border: { display: false },
+                    grid: {
+                        color: 'rgba(0,0,0,0.03)',
+                        drawTicks: false
+                    },
+                    ticks: {
+                        font: { family: 'Inter', size: 11, weight: '500' },
+                        padding: 15,
+                        callback: function(value) { return value + '%'; }
+                    }
+                },
+                x: {
+                    border: { display: false },
+                    grid: { display: false },
+                    ticks: {
+                        font: { family: 'Inter', size: 11, weight: '500' },
+                        padding: 15
+                    }
+                }
+            }
+        }
+    });
+</script>
+@endpush

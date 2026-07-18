@@ -15,24 +15,35 @@
     </div>
     <nav class="hidden md:flex items-center gap-8">
         <a class="text-sm font-medium hover:text-secondary transition-colors" href="#">Beranda</a>
-        <a class="text-sm font-medium hover:text-secondary transition-colors" href="#">Tentang Kami</a>
-        <a class="text-sm font-medium hover:text-secondary transition-colors" href="#">Data Jagung</a>
+        <a class="text-sm font-medium hover:text-secondary transition-colors" href="{{ route('user.tentang_kami') }}">Tentang Kami</a>
+        <a class="text-sm font-medium hover:text-secondary transition-colors" href="{{ route('user.data_jagung') }}">Data Jagung</a>
         <a class="text-sm font-medium hover:text-secondary transition-colors" href="#">Layanan</a>
         <a class="text-sm font-medium hover:text-secondary transition-colors" href="#">Kontak</a>
     </nav>
     <div class="flex items-center gap-3">
         <button class="hidden sm:flex items-center justify-center rounded-lg h-10 px-6 bg-primary-container text-surface text-sm font-bold hover:bg-primary transition-all">Masuk</button>
         <div class="w-10 h-10 rounded-full border border-outline-variant bg-surface-dim overflow-hidden">
-            <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6NNz0DCHeSXl2DRdtZczYuzQyIHlNb6FEa24qAMIs01whLUrUWya6-OEOHHDCNh1Qou_oOy-v7KmhZtMqZXvTeiRpkT8QrH9634kW-kUS6MM1ImmlhHeWUaXhSgeudhT3OrHAgMZ8_0qf7YnuDykeHWJgE87K7b9Rv7QZTRNSUnijpJsmv7mgy6JhF7KoEVsKHBZJhQUw5Knt2XOcHxQ_Bxj8MrmNopSa8AGhcmqJOJLVgUwfcrScXw" alt="Profile" />
+            <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUtQeeYL7ro1mUv7mSfNPR9s74pEN9an8SCSqCKi9Lhks9jY_i717vTgB7STs1NsT0cXjj1MU80QQUECMQ5x5HWIOZCltkUMMOXo_JPFjM8GqEcuNEZvCC-XxmYOISuQN95Ft2BLAAzKPXYH4z4zDatdFQMbHttlkt87cHFS1G9VNZv6kQPq1kG65rIq7Q04yxiEzQ0q2IVkWUbU6fs5ohi9WBI9lPULo576j-T76LE8LHA7WduXzwZg" alt="Profile" />
         </div>
     </div>
 </header>
-<nav id="user-mobile-nav" class="md:hidden hidden mt-16 bg-surface/95 border-b border-outline-variant shadow-sm">
-    <div class="px-6 pb-4 pt-2 flex flex-col gap-3">
-        <a class="text-sm font-medium text-on-surface hover:text-secondary transition-colors" href="#">Beranda</a>
-        <a href="{{ route('user.tentang_kami') }}" class="text-sm font-medium text-on-surface hover:text-secondary transition-colors">Tentang Kami</a>
-        <a class="text-sm font-medium text-on-surface hover:text-secondary transition-colors" href="#">Data Jagung</a>
-        <a class="text-sm font-medium text-on-surface hover:text-secondary transition-colors" href="#">Layanan</a>
-        <a class="text-sm font-medium text-on-surface hover:text-secondary transition-colors" href="#">Kontak</a>
+
+<!-- Background Overlay saat Menu Mobile Terbuka -->
+<div id="user-mobile-overlay" class="fixed inset-0 bg-black/50 z-40 hidden transition-opacity duration-300 opacity-0"></div>
+
+<!-- Menu Navigation Mobile Berganti Menjadi Samping Kiri (Drawer Sidebar) -->
+<nav id="user-mobile-nav" class="fixed top-0 left-0 bottom-0 w-64 bg-surface border-r border-outline-variant shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-6">
+    <div class="px-6 pb-6 flex items-center justify-between border-b border-outline-variant/30">
+        <span class="font-headline text-lg font-bold text-primary">SIDJ-Kluwih</span>
+        <button id="user-mobile-close" class="p-1 hover:bg-surface-container rounded-full text-on-surface-variant">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+    </div>
+    <div class="px-4 py-4 flex flex-col gap-2">
+        <a href="{{ route('user.beranda') }}" class="text-sm font-medium text-on-surface px-3 py-2.5 rounded-xl hover:bg-surface-container transition-colors">Beranda</a>
+        <a href="{{ route('user.tentang_kami') }}" class="text-sm font-medium text-primary font-semibold bg-secondary-container/50 px-3 py-2.5 rounded-xl transition-colors">Tentang Kami</a>
+        <a href="{{ route('user.data_jagung') }}" class="text-sm font-medium text-on-surface px-3 py-2.5 rounded-xl hover:bg-surface-container transition-colors">Data Jagung</a>
+        <a href="{{ route('user.layanan') }}" class="text-sm font-medium text-on-surface px-3 py-2.5 rounded-xl hover:bg-surface-container transition-colors">Layanan</a>
+        <a href="{{ route('user.kontak') }}" class="text-sm font-medium text-on-surface px-3 py-2.5 rounded-xl hover:bg-surface-container transition-colors">Kontak</a>
     </div>
 </nav>

@@ -68,12 +68,32 @@
 @include('user.layout.footer_user')
 <script>
     const mobileToggle = document.getElementById('user-mobile-toggle');
+    const mobileClose = document.getElementById('user-mobile-close');
     const mobileNav = document.getElementById('user-mobile-nav');
-    mobileToggle?.addEventListener('click', () => {
-        mobileNav?.classList.toggle('hidden');
-    });
+    const mobileOverlay = document.getElementById('user-mobile-overlay');
+
+    function openMenu() {
+        mobileNav?.classList.remove('-translate-x-full');
+        mobileOverlay?.classList.remove('hidden');
+        setTimeout(() => {
+            mobileOverlay?.classList.add('opacity-100');
+        }, 10);
+    }
+
+    function closeMenu() {
+        mobileNav?.classList.add('-translate-x-full');
+        mobileOverlay?.classList.remove('opacity-100');
+        setTimeout(() => {
+            mobileOverlay?.classList.add('hidden');
+        }, 300);
+    }
+
+    mobileToggle?.addEventListener('click', openMenu);
+    mobileClose?.addEventListener('click', closeMenu);
+    mobileOverlay?.addEventListener('click', closeMenu);
+
     document.querySelectorAll('#user-mobile-nav a').forEach(link => {
-        link.addEventListener('click', () => mobileNav?.classList.add('hidden'));
+        link.addEventListener('click', closeMenu);
     });
 </script>
 @stack('scripts')

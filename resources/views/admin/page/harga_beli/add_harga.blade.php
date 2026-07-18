@@ -21,14 +21,14 @@
             </nav>
             <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Harga Beli Resmi</h2>
         </div>
-        <!-- 👈 PERBAIKAN: Ditambahkan type="button" agar memicu JS, bukan reload halaman -->
+        <!-- PERBAIKAN UTAMA: Ditambahkan type="button" agar memicu JS modal, bukan me-refresh halaman -->
         <button type="button" onclick="toggleModal(true)" class="flex items-center justify-center gap-sm bg-primary text-on-primary px-lg py-md rounded-xl font-label-md text-label-md hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
             <span class="material-symbols-outlined">add</span>
             Tambah Harga Baru
         </button>
     </div>
 
-    <!-- Statistics Row -->
+    <!-- Statistics Row (Dinamis Database - Rp 0 jika Kosong) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
         <!-- Card 1: Harga Saat Ini -->
         <div class="bg-surface-container-lowest border border-outline-variant/30 p-lg rounded-xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -76,13 +76,13 @@
         <div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant/30 p-lg rounded-xl shadow-sm">
             <div class="flex items-center justify-between mb-xl">
                 <h4 class="font-title-lg text-title-lg text-on-surface">Tren Perubahan Harga Jagung</h4>
-                <select id="harga-range" class="bg-surface-container-low border-none rounded-lg text-label-md font-label-md py-xs pl-md pr-xl focus:ring-primary/20">
+                <select class="bg-surface-container-low border-none rounded-lg text-label-md font-label-md py-xs pl-md pr-xl focus:ring-primary/20">
                     <option>30 Hari Terakhir</option>
                     <option>90 Hari Terakhir</option>
                     <option>Tahun Ini</option>
                 </select>
             </div>
-            <!-- Simulated Chart Area -->
+            <!-- Area SVG Chart Dinamis -->
             <div class="w-full h-64 relative mt-md">
                 @if($highestChartPrice > 0)
                 <svg class="w-full h-full preserve-3d" viewbox="0 0 800 200">
@@ -201,9 +201,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer Decorative Element -->
+    <div class="py-xl flex flex-col items-center opacity-40 grayscale pointer-events-none">
+        <div class="flex gap-lg">
+            <span class="material-symbols-outlined text-[48px]">eco</span>
+            <span class="material-symbols-outlined text-[48px]">analytics</span>
+            <span class="material-symbols-outlined text-[48px]">inventory_2</span>
+        </div>
+    </div>
 </div>
 
-<!-- Pop-up Modal Container (FORM DINAMIS TOTAL) -->
+<!-- Pop-up Modal Container (FORM INTERAKTIF SINKRON DATABASE) -->
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-md hidden" id="add-price-modal">
     <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-md" onclick="toggleModal(false)"></div>
     <div class="relative w-full max-w-lg bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden flex flex-col">
@@ -219,7 +228,7 @@
             </div>
         </div>
         
-        <!-- FORM TARGET BACKEND -->
+        <!-- TARGET ROUTE TERHUBUNG DATABASE -->
         <form action="{{ route('admin.harga_beli.store_harga') }}" method="POST">
             @csrf
             <div class="p-lg space-y-lg overflow-y-auto max-h-[70vh] no-scrollbar">
@@ -232,10 +241,9 @@
                         <p class="text-body-md text-on-secondary-container">Harga pasar saat ini: Rp {{ number_format($currentPrice, 0, ',', '.') }}/kg</p>
                     </div>
                 </div>
-                
                 <div class="grid grid-cols-1 gap-md">
                     <div class="flex flex-col gap-xs">
-                        <label class="text-label-md font-semibold text-on-surface-variant">Varietas Jagung</label>
+                        <label for="variety" class="text-label-md font-semibold text-on-surface-variant">Varietas Jagung</label>
                         <select id="variety" name="variety" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20" required>
                             <option value="Pioneer P35">Pioneer P35</option>
                             <option value="NK Sumo">NK Sumo</option>
@@ -243,15 +251,19 @@
                         </select>
                     </div>
                     <div class="flex flex-col gap-xs">
-                        <label class="text-label-md font-semibold text-on-surface-variant">Harga Beli per KG</label>
+                        <label for="price" class="text-label-md font-semibold text-on-surface-variant">Harga Beli per KG</label>
                         <div class="relative">
                             <span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">Rp</span>
                             <input id="price" name="price" class="w-full pl-xl pr-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" required placeholder="Contoh: 4900"/>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 gap-md">
+                    <div class="grid grid-cols-2 gap-md">
                         <div class="flex flex-col gap-xs">
-                            <label class="text-label-md font-semibold text-on-surface-variant">Standar Kadar Air</label>
+                            <label for="created_at" class="text-label-md font-semibold text-on-surface-variant">Tanggal Berlaku</label>
+                            <input id="created_at" name="created_at" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20" type="date" value="{{ date('Y-m-d') }}"/>
+                        </div>
+                        <div class="flex flex-col gap-xs">
+                            <label for="moisture_standard" class="text-label-md font-semibold text-on-surface-variant">Standar Kadar Air</label>
                             <div class="relative">
                                 <input id="moisture_standard" name="moisture_standard" class="w-full pr-xl pl-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" required value="14"/>
                                 <span class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">%</span>
@@ -259,8 +271,8 @@
                         </div>
                     </div>
                     <div class="flex flex-col gap-xs">
-                        <label class="text-label-md font-semibold text-on-surface-variant">Catatan/Keterangan</label>
-                        <textarea id="note" name="note" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20 h-24" placeholder="Tambahkan catatan khusus seperti ketersediaan pasokan..."></textarea>
+                        <label for="note" class="text-label-md font-semibold text-on-surface-variant">Catatan/Keterangan</label>
+                        <textarea id="note" name="note" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20 h-24" placeholder="Tambahkan catatan khusus..."></textarea>
                     </div>
                 </div>
             </div>

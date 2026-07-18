@@ -212,7 +212,16 @@
                     </div>
                 </div>
                 <!-- Form Section -->
-                <form action="#" class="space-y-lg" onsubmit="return false;">
+                <form action="{{ route('admin.login.submit') }}" method="POST" class="space-y-lg">
+                    @csrf
+                    
+                    {{-- Alert Error jika Autentikasi Gagal --}}
+                    @if ($errors->any())
+                        <div class="p-md bg-error-container text-on-error-container rounded-2xl text-label-md font-label-md">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
+
                     <div class="space-y-sm">
                         <label class="block font-label-md text-label-md text-on-surface-variant ml-xs"
                             for="username">Username</label>
@@ -223,7 +232,7 @@
                             </div>
                             <input
                                 class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-2xl font-body-md text-body-md placeholder:text-outline/50 transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none"
-                                id="username" name="username" placeholder="Masukkan username Anda" type="text" />
+                                id="username" name="username" value="{{ old('username') }}" placeholder="Masukkan username Anda" type="text" required />
                         </div>
                     </div>
                     <div class="space-y-sm">
@@ -236,7 +245,7 @@
                             </div>
                             <input
                                 class="w-full pl-xl pr-12 py-md bg-surface-container-low border border-outline-variant rounded-2xl font-body-md text-body-md placeholder:text-outline/50 transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none"
-                                id="password" name="password" placeholder="••••••••" type="password" />
+                                id="password" name="password" placeholder="••••••••" type="password" required />
                             <button
                                 class="absolute inset-y-0 right-0 pr-md flex items-center text-outline hover:text-primary transition-colors"
                                 type="button">
@@ -249,7 +258,7 @@
                             <div class="relative flex items-center">
                                 <input
                                     class="peer h-5 w-5 rounded border-outline-variant text-primary focus:ring-primary/20 transition-all cursor-pointer"
-                                    type="checkbox" />
+                                    name="remember" type="checkbox" />
                             </div>
                             <span
                                 class="ml-sm font-label-md text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Ingat

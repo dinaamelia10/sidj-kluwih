@@ -35,11 +35,7 @@
         </a>
     </nav>
     <div class="mt-auto flex flex-col gap-sm">
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-all">
-            <span class="material-symbols-outlined">settings</span>
-            <span class="font-label-md text-label-md">Pengaturan</span>
-        </a>
-        <a href="#" class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 transition-all">
+        <a href="{{ route('admin.logout') }}" class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 transition-all">
             <span class="material-symbols-outlined">logout</span>
             <span class="font-label-md text-label-md">Keluar</span>
         </a>

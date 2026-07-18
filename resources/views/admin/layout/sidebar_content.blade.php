@@ -33,7 +33,7 @@
         <span class="material-symbols-outlined">settings</span>
         <span class="font-label-md text-label-md">Pengaturan</span>
     </a>
-    <a href="#" class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 transition-all">
+    <a href="{{ route('admin.logout') }}" class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container/20 transition-all">
         <span class="material-symbols-outlined">logout</span>
         <span class="font-label-md text-label-md">Keluar</span>
     </a>

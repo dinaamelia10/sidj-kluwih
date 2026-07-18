@@ -14,5 +14,18 @@ class UserController extends Controller
     {
         return view('user.pages.tentang.tentang_kami');
     }
+    public function data_jagung()
+    {
+        return view('user.pages.data_jagung.data_jagung');
+    }
+    public function layanan()
+    {
+        return view('user.pages.layanan.layanan');
+    }
+    public function kontak()
+    {
+        return view('user.pages.kontak_kami.kontak');
+    }
 }
+
    

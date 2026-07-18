@@ -5,55 +5,61 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
             <nav class="flex flex-wrap items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-2">
-                <a class="hover:text-primary" href="#">Dashboard</a>
+                <a class="hover:text-primary" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                 <span class="text-primary font-bold">Tonase</span>
             </nav>
             <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Data Tonase Jagung</h1>
             <p class="text-on-surface-variant font-body-md text-body-md mt-2">Pantau pencapaian dan performa tonase jagung secara real-time dengan tampilan yang responsif di desktop dan mobile.</p>
         </div>
-        <button class="inline-flex items-center gap-sm rounded-2xl bg-primary-container px-lg py-3 text-on-primary-container font-bold transition hover:bg-primary active:scale-95 shadow-md">
+        <a href="{{ route('admin.tonase.add_tonase') }}" class="inline-flex items-center gap-sm rounded-2xl bg-primary-container px-lg py-3 text-on-primary-container font-bold transition hover:bg-primary active:scale-95 shadow-md">
             <span class="material-symbols-outlined">add_circle</span>
             Tambah Data Baru
-        </button>
+        </a>
     </div>
 
+    <!-- Bento Card Statistik Dinamis -->
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-lg">
+        <!-- Tonase Hari Ini -->
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="font-label-md text-label-md text-on-surface-variant">Tonase Hari Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">4.2 <span class="text-title-lg">MT</span></h2>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageToday, 1) }} <span class="text-title-lg">MT</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
                     <span class="material-symbols-outlined">today</span>
                 </div>
             </div>
-            <div class="mt-md inline-flex items-center gap-xs text-primary font-bold text-label-sm">
-                <span class="material-symbols-outlined text-sm">trending_up</span>
-                +12% dari kemarin
+            <div class="mt-md inline-flex items-center gap-xs {{ $dailyGrowth >= 0 ? 'text-primary' : 'text-error' }} font-bold text-label-sm">
+                <span class="material-symbols-outlined text-sm">{{ $dailyGrowth >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                {{ $dailyGrowth >= 0 ? '+' : '' }}{{ number_format($dailyGrowth, 1) }}% dari kemarin
             </div>
         </div>
+
+        <!-- Tonase Bulan Ini -->
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="font-label-md text-label-md text-on-surface-variant">Tonase Bulan Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">125.8 <span class="text-title-lg">MT</span></h2>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisMonth, 1) }} <span class="text-title-lg">MT</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
                     <span class="material-symbols-outlined">calendar_month</span>
                 </div>
             </div>
-            <div class="mt-md inline-flex items-center gap-xs text-error font-bold text-label-sm">
-                <span class="material-symbols-outlined text-sm">trending_down</span>
-                -3.5% dari bulan lalu
+            <div class="mt-md inline-flex items-center gap-xs {{ $monthlyGrowth >= 0 ? 'text-primary' : 'text-error' }} font-bold text-label-sm">
+                <span class="material-symbols-outlined text-sm">{{ $monthlyGrowth >= 0 ? 'trending_up' : 'trending_down' }}</span>
+                {{ $monthlyGrowth >= 0 ? '+' : '' }}{{ number_format($monthlyGrowth, 1) }}% dari bulan lalu
             </div>
         </div>
+
+        <!-- Tonase Tahun Ini -->
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="font-label-md text-label-md text-on-surface-variant">Tonase Tahun Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">1,240 <span class="text-title-lg">MT</span></h2>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisYear, 0, '.', ',') }} <span class="text-title-lg">MT</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
                     <span class="material-symbols-outlined">analytics</span>
@@ -61,11 +67,12 @@
             </div>
             <div class="mt-md inline-flex items-center gap-xs text-primary font-bold text-label-sm">
                 <span class="material-symbols-outlined text-sm">verified</span>
-                Target: 1,500 MT
+                Target: {{ number_format($yearlyTarget, 0, '.', ',') }} MT
             </div>
         </div>
     </div>
 
+    <!-- Grafik Batang Mingguan Dinamis -->
     <div class="bento-card p-lg space-y-lg">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex flex-col gap-3">
@@ -83,39 +90,21 @@
         </div>
         <div class="overflow-x-auto hide-scrollbar">
             <div class="h-64 min-w-full flex items-end gap-3 pt-4 px-1">
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="40">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 40%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Sen</p>
+                @foreach($weeklyTonnageData as $index => $volume)
+                @php
+                    $heightPercent = max(5, round(($volume / $maxWeeklyVolume) * 100));
+                @endphp
+                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="{{ number_format($volume, 1) }}">
+                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: {{ $heightPercent }}%"></div>
+                    <p class="text-label-sm text-label-sm opacity-60">{{ $daysLabels[$index] }}</p>
                 </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="65">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 65%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Sel</p>
-                </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="55">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 55%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Rab</p>
-                </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="85">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 85%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Kam</p>
-                </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="95">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 95%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Jum</p>
-                </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="45">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 45%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Sab</p>
-                </div>
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="30">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: 30%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">Min</p>
-                </div>
+                @endforeach
             </div>
         </div>
         <p id="chart-summary" class="text-label-sm text-on-surface-variant">Data untuk 7 Hari Terakhir — volume tonase dibandingkan tren.</p>
     </div>
 
+    <!-- Panel Filter & Pencarian -->
     <div class="bento-card overflow-hidden">
         <div class="border-b border-outline-variant px-lg py-lg">
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -157,6 +146,7 @@
             </div>
         </div>
 
+        <!-- Desktop View Table (Looping Dinamis) -->
         <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left min-w-[720px]">
                 <thead class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
@@ -171,20 +161,29 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant" data-table="transactions">
+                    @forelse($transactions as $transaction)
+                    @php
+                        // Menentukan inisial nama petani untuk avatar lingkaran
+                        $words = explode(' ', $transaction->farmer_name);
+                        $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                        
+                        // Menghitung perkiraan berat kotor simulasi berbasis tonase bersih pengeringan
+                        $grossWeight = $transaction->tonnage * 1.05; 
+                    @endphp
                     <tr class="hover:bg-surface-variant transition-colors group">
-                        <td class="px-lg py-md font-body-md text-body-md">24 Okt 2023</td>
+                        <td class="px-lg py-md font-body-md text-body-md">{{ $transaction->created_at->format('d M Y') }}</td>
                         <td class="px-lg py-md">
                             <div class="flex items-center gap-sm">
-                                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">AS</div>
-                                <span class="font-bold text-body-md">Agus Santoso</span>
+                                <div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold text-xs">{{ $initials }}</div>
+                                <span class="font-bold text-body-md">{{ $transaction->farmer_name }}</span>
                             </div>
                         </td>
-                        <td class="px-lg py-md font-body-md text-body-md">Pioneer P35</td>
-                        <td class="px-lg py-md font-body-md text-body-md text-right">2.500</td>
+                        <td class="px-lg py-md font-body-md text-body-md">{{ $transaction->variety ?? 'Pioneer P35' }}</td>
+                        <td class="px-lg py-md font-body-md text-body-md text-right">{{ number_format($grossWeight, 3) }}</td>
                         <td class="px-lg py-md text-center">
-                            <span class="rounded-full bg-tertiary-fixed px-3 py-1 text-label-sm font-bold text-on-tertiary-fixed">14.2%</span>
+                            <span class="rounded-full bg-tertiary-fixed px-3 py-1 text-label-sm font-bold text-on-tertiary-fixed">{{ $transaction->moisture ?? '14.0' }}%</span>
                         </td>
-                        <td class="px-lg py-md font-bold text-body-md text-right text-primary">2.410</td>
+                        <td class="px-lg py-md font-bold text-body-md text-right text-primary">{{ number_format($transaction->tonnage, 3) }}</td>
                         <td class="px-lg py-md">
                             <div class="flex justify-center gap-sm">
                                 <button class="p-xs text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
@@ -192,72 +191,41 @@
                             </div>
                         </td>
                     </tr>
-                    <tr class="hover:bg-surface-variant transition-colors group">
-                        <td class="px-lg py-md font-body-md text-body-md">24 Okt 2023</td>
-                        <td class="px-lg py-md">
-                            <div class="flex items-center gap-sm">
-                                <div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-bold text-xs">SW</div>
-                                <span class="font-bold text-body-md">Siti Wahyuni</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-md font-body-md text-body-md">NK Sumo</td>
-                        <td class="px-lg py-md font-body-md text-body-md text-right">1.850</td>
-                        <td class="px-lg py-md text-center">
-                            <span class="rounded-full bg-secondary-container px-3 py-1 text-label-sm font-bold text-on-secondary-container">12.5%</span>
-                        </td>
-                        <td class="px-lg py-md font-bold text-body-md text-right text-primary">1.820</td>
-                        <td class="px-lg py-md">
-                            <div class="flex justify-center gap-sm">
-                                <button class="p-xs text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="p-xs text-error hover:text-error-container transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                            </div>
-                        </td>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="px-lg py-md text-center text-on-surface-variant italic">Belum ada riwayat transaksi tonase.</td>
                     </tr>
-                    <tr class="hover:bg-surface-variant transition-colors group">
-                        <td class="px-lg py-md font-body-md text-body-md">23 Okt 2023</td>
-                        <td class="px-lg py-md">
-                            <div class="flex items-center gap-sm">
-                                <div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold text-xs">BT</div>
-                                <span class="font-bold text-body-md">Bambang Tri</span>
-                            </div>
-                        </td>
-                        <td class="px-lg py-md font-body-md text-body-md">Bisi 18</td>
-                        <td class="px-lg py-md font-body-md text-body-md text-right">3.200</td>
-                        <td class="px-lg py-md text-center">
-                            <span class="rounded-full bg-error-container px-3 py-1 text-label-sm font-bold text-on-error-container">17.8%</span>
-                        </td>
-                        <td class="px-lg py-md font-bold text-body-md text-right text-primary">2.950</td>
-                        <td class="px-lg py-md">
-                            <div class="flex justify-center gap-sm">
-                                <button class="p-xs text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="p-xs text-error hover:text-error-container transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
+        <!-- Mobile Responsive Card View (Looping Dinamis) -->
         <div class="md:hidden divide-y divide-outline-variant" data-card="transactions">
+            @foreach($transactions as $transaction)
+            @php
+                $words = explode(' ', $transaction->farmer_name);
+                $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+            @endphp
             <div class="transaction-card space-y-md rounded-[1.25rem] border border-outline-variant bg-surface-container-lowest p-lg">
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex items-center gap-sm">
-                        <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">AS</div>
+                        <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-bold">{{ $initials }}</div>
                         <div>
-                            <p class="font-bold text-body-md">Agus Santoso</p>
-                            <p class="text-label-sm text-on-surface-variant">24 Okt 2023</p>
+                            <p class="font-bold text-body-md">{{ $transaction->farmer_name }}</p>
+                            <p class="text-label-sm text-on-surface-variant">{{ $transaction->created_at->format('d M Y') }}</p>
                         </div>
                     </div>
-                    <span class="rounded-full bg-primary/10 px-3 py-1 text-label-sm font-bold text-primary">2.410 MT</span>
+                    <span class="rounded-full bg-primary/10 px-3 py-1 text-label-sm font-bold text-primary">{{ number_format($transaction->tonnage, 3) }} MT</span>
                 </div>
                 <div class="grid grid-cols-2 gap-sm text-label-sm">
                     <div class="rounded-xl bg-surface-container-low px-3 py-3">
                         <p class="text-on-surface-variant">Varietas</p>
-                        <p class="font-bold">Pioneer P35</p>
+                        <p class="font-bold">{{ $transaction->variety ?? 'Pioneer P35' }}</p>
                     </div>
                     <div class="rounded-xl bg-surface-container-low px-3 py-3">
                         <p class="text-on-surface-variant">Kadar Air</p>
-                        <p class="font-bold">14.2%</p>
+                        <p class="font-bold">{{ $transaction->moisture ?? '14.0' }}%</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap justify-end gap-3 pt-sm">
@@ -265,21 +233,17 @@
                     <button class="inline-flex items-center gap-xs text-error font-bold"><span class="material-symbols-outlined text-sm">delete</span> Hapus</button>
                 </div>
             </div>
+            @endforeach
         </div>
     </div>
 
+    <!-- Pagination Laravel Standar (Menyesuaikan Total Data Riil) -->
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <p class="text-label-md text-on-surface-variant">Menampilkan 1-10 dari 1,240 data</p>
+        <p class="text-label-md text-on-surface-variant">
+            Menampilkan {{ $transactions->firstItem() ?? 0 }}-{{ $transactions->lastItem() ?? 0 }} dari {{ $transactions->total() }} data
+        </p>
         <div class="flex flex-wrap items-center gap-2">
-            <button class="h-10 w-10 rounded-xl border border-outline-variant bg-white text-on-surface hover:bg-surface-variant disabled:opacity-50" disabled>
-                <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button class="h-10 w-10 rounded-xl bg-primary text-on-primary font-bold">1</button>
-            <button class="h-10 w-10 rounded-xl border border-outline-variant bg-white text-on-surface hover:bg-surface-variant">2</button>
-            <button class="h-10 w-10 rounded-xl border border-outline-variant bg-white text-on-surface hover:bg-surface-variant">3</button>
-            <button class="h-10 w-10 rounded-xl border border-outline-variant bg-white text-on-surface hover:bg-surface-variant">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
+            {{ $transactions->links('pagination::tailwind') }}
         </div>
     </div>
 </div>
@@ -290,7 +254,7 @@
     document.querySelectorAll('input[data-search-target="transactions"]').forEach(search => {
         search.addEventListener('input', event => {
             const value = event.target.value.toLowerCase();
-            document.querySelectorAll('[data-table="transactions"] tbody tr, [data-card="transactions"] .transaction-card').forEach(item => {
+            document.querySelectorAll('[data-table="transactions"] tr, [data-card="transactions"] .transaction-card').forEach(item => {
                 const text = item.innerText.toLowerCase();
                 item.style.display = text.includes(value) ? '' : 'none';
             });
@@ -335,7 +299,7 @@
         const value = parent.getAttribute('data-value');
         parent.addEventListener('mouseenter', () => {
             bar.classList.add('bg-primary-container');
-            chartSummary.textContent = `${parent.querySelector('p').innerText}: ${value}% dari target mingguan.`;
+            chartSummary.textContent = `${parent.querySelector('p').innerText}: ${value} MT volume tonase minggu ini.`;
         });
         parent.addEventListener('mouseleave', () => {
             bar.classList.remove('bg-primary-container');
