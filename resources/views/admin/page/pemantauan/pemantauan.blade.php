@@ -10,7 +10,14 @@
                         <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                         <span class="text-primary font-bold">Monitoring & Timer Pengeringan</span>
                     </nav>
-                    <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Monitoring Suhu & Timer Pengeringan</h1>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Monitoring Suhu & Timer Pengeringan</h1>
+                        <!-- MQTT Connection Status Pill -->
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-red-300 text-red-600 bg-red-50 text-xs font-bold transition-all shadow-sm animate-pulse" id="mqtt-status-pill">
+                            <span class="w-2 h-2 rounded-full bg-red-600 shadow animate-pulse" id="mqtt-status-dot"></span>
+                            <span id="mqtt-status-text">DISCONNECTED</span>
+                        </div>
+                    </div>
                     <p class="text-on-surface-variant font-body-md text-body-md mt-2">Pantau kinerja kompor, timer jam pengeringan, dan riwayat operasional alat secara real-time.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-sm">
@@ -45,21 +52,32 @@
             <!-- Status Highlight Cards (Bento style) -->
             <div class="grid grid-cols-1 gap-lg md:grid-cols-3">
                 <!-- Suhu Saat Ini -->
-                <div
-                    class="bg-surface-container-lowest p-lg rounded-[20px] border border-outline-variant shadow-sm relative overflow-hidden group">
-                    <div class="flex justify-between items-start mb-md">
+                <div class="bg-surface-container-lowest p-lg rounded-[20px] border border-outline-variant shadow-sm relative overflow-hidden group flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-2">
                         <div class="space-y-1">
                             <p class="text-on-surface-variant font-label-md">Suhu Kompor</p>
-                            <h3 class="text-[40px] font-bold text-primary leading-none" id="realtime-temp">{{ $currentTemperature }}°C</h3>
+                            <h3 class="text-[32px] font-bold text-primary leading-none" id="realtime-temp">{{ $currentTemperature }}°C</h3>
                         </div>
-                        <div
-                            class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-on-secondary-container">
-                            <span class="material-symbols-outlined" data-icon="thermostat">thermostat</span>
+                        <div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+                            <span class="material-symbols-outlined">thermostat</span>
                         </div>
                     </div>
+                    
+                    <!-- Gauge Wrapper -->
+                    <div class="relative h-28 flex justify-center items-end mb-2">
+                        <canvas id="gaugeChart" class="max-w-[160px] max-h-[80px]"></canvas>
+                        <div class="absolute bottom-2 text-center">
+                            <div class="text-2xl font-black text-on-surface font-mono" id="gauge-val">{{ $currentTemperature }}</div>
+                            <div class="text-[8px] text-on-surface-variant uppercase tracking-wider font-bold">CELSIUS</div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between px-6 text-[10px] font-bold text-on-surface-variant mt-[-10px] mb-4">
+                        <span>0</span>
+                        <span>70</span>
+                    </div>
+
                     <div class="flex items-center gap-sm">
-                        <span
-                            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $statusClass }} text-[10px] font-bold uppercase tracking-wider">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $statusClass }} text-[10px] font-bold uppercase tracking-wider" id="status-mesin-badge">
                             <span class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></span>
                             {{ $statusMesin }}
                         </span>
@@ -123,68 +141,44 @@
                         @endif
                     </div>
                 </div>
-            </div>
-
-            <!-- Main Chart Area -->
+            </div>            <!-- Main Chart Area -->
             <div class="bg-surface-container-lowest rounded-[20px] border border-outline-variant shadow-sm p-lg relative" id="chart-print-area">
                 <div class="hidden print-header mb-4 p-4 border-b border-gray-300">
                     <h2 class="text-xl font-bold text-gray-900">🌽 SIDJ-Kluwih — Grafik Monitoring Suhu Smart Dryer</h2>
                     <p class="text-xs text-gray-600">Unit Pengeringan 01 • Tanggal Cetak: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</p>
                 </div>
-                <div class="flex items-center justify-between mb-lg">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-lg">
                     <div class="flex items-center gap-md">
                         <div class="w-1.5 h-6 bg-primary rounded-full"></div>
-                        <h3 class="font-title-lg text-title-lg text-on-surface">Grafik Suhu Realtime Kompor</h3>
+                        <h3 class="font-title-lg text-title-lg text-on-surface font-extrabold">Grafik Riwayat Suhu (Real-time)</h3>
                     </div>
-                    <div class="flex items-center gap-sm">
-                        <span class="flex items-center gap-1.5 text-label-md text-on-surface-variant">
-                            <span class="w-3 h-3 rounded-full bg-primary"></span>
-                            Suhu Dryer
-                        </span>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2">
+                            <label for="timeRange" class="text-xs text-on-surface-variant font-bold">Rentang Waktu:</label>
+                            <select id="timeRange" class="rounded-xl border border-outline-variant bg-surface-container-lowest px-3 py-1.5 text-xs font-bold text-on-surface outline-none cursor-pointer hover:bg-surface-container-low transition">
+                                <option value="10">10 Menit</option>
+                                <option value="30">30 Menit</option>
+                                <option value="60" selected>1 Jam</option>
+                                <option value="120">2 Jam</option>
+                                <option value="180">3 Jam</option>
+                                <option value="240">4 Jam</option>
+                                <option value="300">5 Jam</option>
+                                <option value="360">6 Jam</option>
+                            </select>
+                        </div>
+                        
+                        <button type="button" onclick="clearDashboardData()" class="inline-flex items-center gap-sm rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 text-xs text-red-700 font-bold transition shadow-sm cursor-pointer">
+                            <span class="material-symbols-outlined text-sm">delete_sweep</span>
+                            Hapus Data Firebase
+                        </button>
                     </div>
                 </div>
-                <!-- SVG Chart Dinamis Menggunakan Jalur Koordinat ($svgPoints) & Titik Per 30 Menit -->
-                <div class="h-64 md:h-80 w-full relative">
-                    <svg class="w-full h-full preserve-3d" preserveAspectRatio="none" viewBox="0 0 1000 300">
-                        <line stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1" x1="0" x2="1000" y1="50" y2="50"></line>
-                        <line stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1" x1="0" x2="1000" y1="125" y2="125"></line>
-                        <line stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1" x1="0" x2="1000" y1="200" y2="200"></line>
-                        <line stroke="#e2e8f0" stroke-dasharray="4" stroke-width="1" x1="0" x2="1000" y1="275" y2="275"></line>
-                        
-                        <path d="{{ $svgPoints }} L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
-                        <path d="{{ $svgPoints }}" fill="none" stroke="#0d631b" stroke-linecap="round" stroke-width="3"></path>
-                        
-                        <!-- Loop titik interval per 30 menit (misal 08:00, 08:30, 09:00, dst) -->
-                        @foreach($chartTicks as $tk)
-                        <circle cx="{{ $tk['x'] ?? 0 }}" cy="{{ $tk['y'] ?? 200 }}" r="6" fill="{{ $tk['is_past'] ? '#0d631b' : '#94a3b8' }}" stroke="#ffffff" stroke-width="2" class="{{ $loop->last && $activeSession ? 'animate-pulse' : '' }}">
-                            <title>Jam {{ $tk['time'] }} — Suhu: {{ $tk['temp'] }}°C</title>
-                        </circle>
-                        @endforeach
 
-                        <defs>
-                            <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stop-color="#0d631b" stop-opacity="0.2"></stop>
-                                <stop offset="100%" stop-color="#0d631b" stop-opacity="0"></stop>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="absolute top-0 left-0 h-full flex flex-col justify-between text-[10px] text-on-surface-variant font-bold pb-2">
-                        <span>100°C</span>
-                        <span>75°C</span>
-                        <span>50°C</span>
-                        <span>25°C</span>
-                        <span>0°C</span>
-                    </div>
+                <!-- Canvas Chart.js -->
+                <div class="h-64 md:h-80 w-full relative">
+                    <canvas id="tempChart"></canvas>
                 </div>
-                <!-- Sumbu X: Titik Jam Per 30 Menit (Setengah Jam) -->
-                <div class="flex justify-between mt-4 text-[11px] text-on-surface-variant font-bold px-2 border-t border-slate-100 pt-3">
-                    @foreach($chartTicks as $tk)
-                    <div class="text-center">
-                        <span class="block {{ $tk['is_past'] ? 'text-primary font-black' : 'text-slate-400' }}">{{ $tk['time'] }}</span>
-                        <span class="text-[9px] text-slate-400 font-normal">{{ $tk['temp'] }}°C</span>
-                    </div>
-                    @endforeach
-                </div>
+            </div>
             </div>
 
             <!-- Machine Usage History Section (Riwayat Penggunaan Alat Lengkap) -->
@@ -372,6 +366,297 @@
 @endpush
 
 @push('scripts')
+    <!-- MQTT.js library -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK & Real-time Client Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABrUnTyBhYrV6nF85gRrKlzAYJ2ZFLAGw",
+            authDomain: "dryerjagung-63ad6.firebaseapp.com",
+            databaseURL: "https://dryerjagung-63ad6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dryerjagung-63ad6",
+            storageBucket: "dryerjagung-63ad6.firebasestorage.app",
+            messagingSenderId: "289609597211",
+            appId: "1:289609597211:web:ed099c191423e2c06553be",
+            measurementId: "G-QMETET7CL3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const MAX_TEMP = 70.0;
+        const CRITICAL_TEMP = 60.0;
+        Chart.defaults.color = '#40493d';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        let masterDataHistory = [];
+        let selectedMinutes = 60;
+        let lastPostTime = 0; // for local sync throttle
+
+        // 1. Line Chart initialization
+        const ctxTemp = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(ctxTemp, {
+            type: 'line',
+            data: { 
+                labels: [], 
+                datasets: [{ 
+                    data: [], 
+                    borderColor: '#0d631b', 
+                    backgroundColor: 'rgba(13, 99, 27, 0.1)', 
+                    borderWidth: 2, 
+                    fill: true, 
+                    tension: 0.4 
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } }, 
+                scales: { 
+                    x: { grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false } }, 
+                    y: { min: 20, max: MAX_TEMP, grid: { color: 'rgba(0, 0, 0, 0.05)', drawBorder: false } } 
+                }, 
+                elements: { point: { radius: 0 } } 
+            }
+        });
+
+        // 2. Gauge Chart initialization
+        const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
+        const gaugeChart = new Chart(ctxGauge, {
+            type: 'doughnut',
+            data: { 
+                datasets: [{ 
+                    data: [0, MAX_TEMP], 
+                    backgroundColor: ['#0d631b', '#f1f5f9'], 
+                    borderWidth: 0, 
+                    circumference: 180, 
+                    rotation: 270, 
+                    cutout: '82%' 
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false }, tooltip: { enabled: false } } 
+            }
+        });
+
+        function updateGaugeColor(val) {
+            let color = '#0d631b'; // Green (Safe)
+            if (val >= 60) {
+                color = '#ba1a1a'; // Red (Danger/Error in master palette)
+            } else if (val >= 55) {
+                color = '#eab308'; // Yellow (Warning)
+            }
+            gaugeChart.data.datasets[0].backgroundColor[0] = color;
+        }
+
+        // 3. Load historical data from Firebase Realtime Database
+        function loadHistoryFromFirebase() {
+            const dbRef = ref(database);
+            get(child(dbRef, 'Suhu_Mesin/Atas')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dataObj = snapshot.val();
+                    masterDataHistory = [];
+                    const keys = Object.keys(dataObj);
+                    const totalItems = keys.length;
+                    const now = new Date().getTime();
+
+                    keys.forEach((key, index) => {
+                        const val = parseFloat(dataObj[key]);
+                        if (!isNaN(val)) {
+                            // Calculate timestamps relative to now, 1 minute per log point
+                            const timeOffset = (totalItems - 1 - index) * 60000;
+                            const itemTime = new Date(now - timeOffset);
+
+                            masterDataHistory.push({
+                                timestamp: itemTime,
+                                timeStr: itemTime.getHours().toString().padStart(2, '0') + ':' + itemTime.getMinutes().toString().padStart(2, '0') + ':' + itemTime.getSeconds().toString().padStart(2, '0'),
+                                value: val
+                            });
+                        }
+                    });
+
+                    renderFilteredChart();
+
+                    if (masterDataHistory.length > 0) {
+                        const lastVal = masterDataHistory[masterDataHistory.length - 1].value;
+                        document.getElementById('gauge-val').innerText = lastVal.toFixed(1);
+                        document.getElementById('realtime-temp').innerText = lastVal.toFixed(1) + '°C';
+                        let gaugeValue = lastVal > MAX_TEMP ? MAX_TEMP : lastVal;
+                        updateGaugeColor(lastVal);
+                        gaugeChart.data.datasets[0].data = [gaugeValue, MAX_TEMP - gaugeValue];
+                        gaugeChart.update();
+                    }
+                }
+            }).catch((error) => {
+                console.error("Gagal mengambil riwayat Firebase: ", error);
+            });
+        }
+
+        loadHistoryFromFirebase();
+
+        // Expose time range filter change to window
+        window.changeTimeRange = function () {
+            const selectEl = document.getElementById('timeRange');
+            selectedMinutes = parseInt(selectEl.value);
+            renderFilteredChart();
+        };
+        // bind change handler to element if exists
+        document.getElementById('timeRange')?.addEventListener('change', window.changeTimeRange);
+
+        function renderFilteredChart() {
+            const now = new Date();
+            const limitTime = new Date(now.getTime() - (selectedMinutes * 60 * 1000));
+
+            const filtered = masterDataHistory.filter(item => item.timestamp >= limitTime);
+
+            tempChart.data.labels = filtered.map(item => item.timeStr);
+            tempChart.data.datasets[0].data = filtered.map(item => item.value);
+            tempChart.update();
+        }
+
+        function updateChartsUI(timeStr, value) {
+            const now = new Date();
+            masterDataHistory.push({
+                timestamp: now,
+                timeStr: timeStr,
+                value: value
+            });
+
+            renderFilteredChart();
+
+            let gaugeValue = value > MAX_TEMP ? MAX_TEMP : value;
+            let gaugeRem = MAX_TEMP - gaugeValue;
+            updateGaugeColor(value);
+            gaugeChart.data.datasets[0].data = [gaugeValue, gaugeRem];
+            gaugeChart.update();
+        }
+
+        function checkWarningCondition(val) {
+            const pill = document.getElementById('mqtt-status-pill');
+            const dot = document.getElementById('mqtt-status-dot');
+            const text = document.getElementById('mqtt-status-text');
+            const statusBadge = document.getElementById('status-mesin-badge');
+            
+            if (val >= CRITICAL_TEMP) {
+                // High temperature warning!
+                pill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-red-300 text-red-600 bg-red-50 text-xs font-bold transition-all shadow-sm animate-pulse";
+                dot.className = "w-2 h-2 rounded-full bg-red-600 shadow animate-pulse";
+                text.innerText = "WARNING: SUHU >= 60°C!";
+                if (statusBadge) {
+                    statusBadge.innerText = "CRITICAL SUHU";
+                    statusBadge.className = "inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider animate-pulse";
+                }
+            } else {
+                // Connected normal state
+                pill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-300 text-emerald-600 bg-emerald-50 text-xs font-bold transition-all shadow-sm";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-600 shadow";
+                text.innerText = "CONNECTED";
+            }
+        }
+
+        // 4. MQTT Connection over WebSockets
+        const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
+        const topicSuhu = 'pabrik/mesin/suhu_atas';
+        const client = mqtt.connect(brokerUrl);
+
+        client.on('connect', function () {
+            checkWarningCondition(0);
+            client.subscribe(topicSuhu);
+        });
+
+        client.on('close', function () {
+            const pill = document.getElementById('mqtt-status-pill');
+            const dot = document.getElementById('mqtt-status-dot');
+            const text = document.getElementById('mqtt-status-text');
+            
+            pill.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-red-300 text-red-600 bg-red-50 text-xs font-bold transition-all shadow-sm animate-pulse";
+            dot.className = "w-2 h-2 rounded-full bg-red-600 shadow";
+            text.innerText = "DISCONNECTED";
+        });
+
+        client.on('message', function (topic, message) {
+            if (topic === topicSuhu) {
+                const val = parseFloat(message.toString());
+                if (!isNaN(val)) {
+                    document.getElementById('gauge-val').innerText = val.toFixed(1);
+                    document.getElementById('realtime-temp').innerText = val.toFixed(1) + '°C';
+                    const now = new Date();
+                    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0') + ':' + now.getSeconds().toString().padStart(2, '0');
+                    updateChartsUI(timeStr, val);
+                    checkWarningCondition(val);
+
+                    // Local database sync throttling (max once every 10 seconds)
+                    const currentTime = Date.now();
+                    if (currentTime - lastPostTime >= 10000) {
+                        lastPostTime = currentTime;
+                        fetch('/api/iot/sensor', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                suhu: val,
+                                kadar_air: {{ $currentMoisture }},
+                                batch_id: {!! json_encode($activeSession ? $activeSession->batch_name : 'Tungku Utama') !!}
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Sync data lokal sukses:', data);
+                        })
+                        .catch(err => {
+                            console.error('Sync data lokal gagal:', err);
+                        });
+                    }
+                }
+            }
+        });
+
+        // 5. Clear Dashboard data (Both Firebase & Local)
+        window.clearDashboardData = function () {
+            if (!confirm("Apakah kamu yakin ingin menghapus data grafik di layar, Firebase, DAN database lokal?")) return;
+
+            masterDataHistory = [];
+            tempChart.data.labels = [];
+            tempChart.data.datasets[0].data = [];
+            tempChart.update();
+
+            const dbRef = ref(database, 'Suhu_Mesin/Atas');
+            remove(dbRef).then(() => {
+                // Clear local Laravel database logs
+                fetch("{{ route('admin.pemantauan.clear') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert("Berhasil! Riwayat data di Firebase dan database lokal telah dibersihkan.");
+                    window.location.reload();
+                })
+                .catch(err => {
+                    alert("Gagal menghapus data lokal: " + err);
+                });
+            }).catch((error) => {
+                alert("Gagal menghapus data di Firebase: " + error);
+                console.error(error);
+            });
+        };
+    </script>
+
+    <!-- Standard UI Scripts -->
     <script>
         function openStartDryingModal() {
             const modal = document.getElementById('startDryingModal');
