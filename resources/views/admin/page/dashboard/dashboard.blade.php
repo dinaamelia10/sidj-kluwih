@@ -55,7 +55,7 @@
         <div class="flex justify-between items-start">
             <div class="space-y-1">
                 <span class="text-label-md font-medium text-on-surface-variant">Suhu Kompor saat ini</span>
-                <div class="text-3xl font-black text-on-surface">{{ $currentTemperature }}°C</div>
+                <div class="text-3xl font-black text-on-surface" id="realtime-temp">{{ $currentTemperature }}°C</div>
             </div>
             <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-600">
                 <span class="material-symbols-outlined text-2xl">thermostat</span>
@@ -200,8 +200,8 @@
             <div class="w-full">
                 <div class="p-4 bg-surface-container-low rounded-2xl text-center border border-outline-variant/30">
                     <p class="text-[11px] font-bold text-outline mb-1 uppercase tracking-wider">Suhu Kompor</p>
-                    <p class="text-lg font-black text-on-surface">{{ $currentTemperature }}°C</p>
-                    <span class="text-[10px] text-emerald-600 font-medium">Safety Normal</span>
+                    <p class="text-lg font-black text-on-surface" id="param-temp">{{ $currentTemperature }}°C</p>
+                    <span class="text-[10px] text-emerald-600 font-medium" id="temp-safety">Safety Normal</span>
                 </div>
             </div>
         </div>
@@ -352,7 +352,120 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- MQTT.js library -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Firebase SDK & Real-time Client Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABrUnTyBhYrV6nF85gRrKlzAYJ2ZFLAGw",
+            authDomain: "dryerjagung-63ad6.firebaseapp.com",
+            databaseURL: "https://dryerjagung-63ad6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dryerjagung-63ad6",
+            storageBucket: "dryerjagung-63ad6.firebasestorage.app",
+            messagingSenderId: "289609597211",
+            appId: "1:289609597211:web:ed099c191423e2c06553be",
+            measurementId: "G-QMETET7CL3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Load historical/latest data from Firebase Realtime Database
+        function loadHistoryFromFirebase() {
+            const dbRef = ref(database);
+            get(child(dbRef, 'Suhu_Mesin/Atas')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dataObj = snapshot.val();
+                    const keys = Object.keys(dataObj);
+                    if (keys.length > 0) {
+                        const lastKey = keys[keys.length - 1];
+                        const lastVal = parseFloat(dataObj[lastKey]);
+                        if (!isNaN(lastVal)) {
+                            updateSuhuDisplay(lastVal);
+                        }
+                    }
+                }
+            }).catch((error) => {
+                console.error("Gagal mengambil riwayat Firebase: ", error);
+            });
+        }
+
+        loadHistoryFromFirebase();
+
+        // MQTT Connection over WebSockets
+        const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
+        const topicSuhu = 'pabrik/mesin/suhu_atas';
+        const client = mqtt.connect(brokerUrl);
+        let lastPostTime = 0;
+
+        client.on('connect', function () {
+            client.subscribe(topicSuhu);
+        });
+
+        client.on('message', function (topic, message) {
+            if (topic === topicSuhu) {
+                const val = parseFloat(message.toString());
+                if (!isNaN(val)) {
+                    updateSuhuDisplay(val);
+
+                    // Sync to local database once every 10 seconds
+                    const currentTime = Date.now();
+                    if (currentTime - lastPostTime >= 10000) {
+                        lastPostTime = currentTime;
+                        fetch('/api/iot/sensor', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                suhu: val,
+                                kadar_air: {{ $currentMoisture }},
+                                batch_id: {!! json_encode($activeSession ? $activeSession->batch_name : 'Tungku Utama') !!}
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Sync data lokal sukses:', data);
+                        })
+                        .catch(err => {
+                            console.error('Sync data lokal gagal:', err);
+                        });
+                    }
+                }
+            }
+        });
+
+        function updateSuhuDisplay(val) {
+            const realtimeTempElem = document.getElementById('realtime-temp');
+            const paramTempElem = document.getElementById('param-temp');
+            const safetyElem = document.getElementById('temp-safety');
+
+            if (realtimeTempElem) realtimeTempElem.innerText = val.toFixed(1) + '°C';
+            if (paramTempElem) paramTempElem.innerText = val.toFixed(1) + '°C';
+            
+            if (safetyElem) {
+                if (val >= 60.0) {
+                    safetyElem.innerText = "CRITICAL SUHU";
+                    safetyElem.className = "text-[10px] text-red-600 font-bold animate-pulse";
+                } else if (val >= 55.0) {
+                    safetyElem.innerText = "Suhu Tinggi (Peringatan)";
+                    safetyElem.className = "text-[10px] text-yellow-600 font-bold";
+                } else {
+                    safetyElem.innerText = "Safety Normal";
+                    safetyElem.className = "text-[10px] text-emerald-600 font-medium";
+                }
+            }
+        }
+    </script>
+
 <script>
     function openStartDryingModal() {
         const modal = document.getElementById('startDryingModal');

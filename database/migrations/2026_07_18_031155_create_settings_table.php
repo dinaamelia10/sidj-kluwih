@@ -33,7 +33,7 @@ return new class extends Migration
 
             // === Parameter Pengeringan (sesuai CV Fian Putra) ===
             ['key' => 'suhu_target',        'value' => '82',            'group' => 'pengeringan', 'label' => 'Suhu Operasional Target (°C)'],
-            ['key' => 'suhu_max',           'value' => '85',            'group' => 'pengeringan', 'label' => 'Suhu Maksimum (°C)'],
+            ['key' => 'suhu_max',           'value' => '60',            'group' => 'pengeringan', 'label' => 'Suhu Maksimum (°C)'],
             ['key' => 'kadar_air_target',   'value' => '15',            'group' => 'pengeringan', 'label' => 'Target Kadar Air Standar (%)'],
             ['key' => 'kadar_air_warning',  'value' => '17',            'group' => 'pengeringan', 'label' => 'Batas Kadar Air Risiko Jamur (%)'],
             ['key' => 'durasi_estimasi',    'value' => '6',             'group' => 'pengeringan', 'label' => 'Estimasi Durasi Pengeringan (Jam)'],
@@ -45,7 +45,7 @@ return new class extends Migration
             // === Aturan Notifikasi ===
             ['key' => 'notif_balik',        'value' => '1',             'group' => 'notifikasi',  'label' => 'Notifikasi Jagung Perlu Dibalik'],
             ['key' => 'notif_selesai',      'value' => '1',             'group' => 'notifikasi',  'label' => 'Notifikasi Pengeringan Selesai'],
-            ['key' => 'notif_jamur',        'value' => '1',             'group' => 'notifikasi',  'label' => 'Notifikasi Risiko Jamur (≤17%)'],
+            ['key' => 'notif_jamur',        'value' => '0',             'group' => 'notifikasi',  'label' => 'Notifikasi Risiko Jamur (≤17%)'],
             ['key' => 'notif_suhu_tinggi',  'value' => '1',             'group' => 'notifikasi',  'label' => 'Notifikasi Suhu Melebihi Batas'],
             ['key' => 'notif_kirim_ke_petani', 'value' => '0',          'group' => 'notifikasi',  'label' => 'Kirim Notifikasi ke Petani'],
 

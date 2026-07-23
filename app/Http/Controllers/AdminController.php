@@ -28,9 +28,9 @@ class AdminController extends Controller
         // Logika Batas Pemicu Notifikasi Pembalikan Jagung
         $showNotification = false;
         $notificationMessage = "";
-        if ($currentTemperature >= 45.0 || $currentMoisture >= 18.0) {
+        if ($activeSession && $currentTemperature >= 45.0) {
             $showNotification = true;
-            $notificationMessage = "Peringatan: Kondisi pengeringan kritis (Suhu: {$currentTemperature}°C, Kadar Air: {$currentMoisture}%). Segera lakukan pembalikan jagung agar merata!";
+            $notificationMessage = "Peringatan: Proses pengeringan sedang berjalan (Suhu Kompor: {$currentTemperature}°C). Segera lakukan pembalikan jagung agar panas merata!";
         }
 
 

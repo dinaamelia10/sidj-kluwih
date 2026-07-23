@@ -227,9 +227,9 @@
                                 <div>
                                     <label class="text-[10px] uppercase font-bold text-on-surface-variant">Suhu Maksimal (Kritis)</label>
                                     <div class="flex items-center gap-2 mt-1">
-                                        <input type="number" name="suhu_max" value="{{ $settings['suhu_max'] ?? '85' }}" 
+                                        <input type="number" name="suhu_max" value="{{ $settings['suhu_max'] ?? '60' }}" 
                                             class="w-full rounded-xl border border-error px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-error">
-                                        <span class="text-label-sm font-bold">°C</span>
+                                        <span class="text-label-md font-bold">°C</span>
                                     </div>
                                     <p class="text-[10px] text-error mt-1">Jika suhu > batas maks, kualitas jagung bisa rusak.</p>
                                 </div>
@@ -238,9 +238,12 @@
 
                         {{-- Standar Kadar Air --}}
                         <div class="p-4 bg-surface-container-lowest border border-outline-variant/50 rounded-2xl">
-                            <div class="flex items-center gap-2 mb-4">
-                                <span class="material-symbols-outlined text-secondary">water_drop</span>
-                                <h3 class="font-bold text-sm">Standar Kadar Air</h3>
+                            <div class="flex items-center justify-between gap-2 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-secondary">water_drop</span>
+                                    <h3 class="font-bold text-sm">Standar Kadar Air</h3>
+                                </div>
+                                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[9px] font-extrabold uppercase tracking-wider">Simulasi</span>
                             </div>
                             <div class="space-y-3">
                                 <div>
@@ -328,7 +331,7 @@
                         <div class="flex items-center justify-between p-4 bg-white border border-outline-variant rounded-2xl border-l-4 border-l-error">
                             <div>
                                 <h3 class="font-bold text-sm">Peringatan Kritis: Suhu Maksimal</h3>
-                                <p class="text-xs text-on-surface-variant">Kirim peringatan jika suhu tungku melewati suhu maksimal ({{ $settings['suhu_max'] ?? 85 }}°C).</p>
+                                <p class="text-xs text-on-surface-variant">Kirim peringatan jika suhu tungku melewati suhu maksimal ({{ $settings['suhu_max'] ?? 60 }}°C).</p>
                             </div>
                             <label class="switch">
                                 <input type="checkbox" name="notif_suhu_tinggi" value="1" {{ ($settings['notif_suhu_tinggi'] ?? '1') == '1' ? 'checked' : '' }} />
@@ -337,13 +340,16 @@
                         </div>
 
                         {{-- Notif Jamur --}}
-                        <div class="flex items-center justify-between p-4 bg-white border border-outline-variant rounded-2xl border-l-4 border-l-warning">
+                        <div class="flex items-center justify-between p-4 bg-white border border-outline-variant rounded-2xl border-l-4 border-l-warning opacity-70">
                             <div>
-                                <h3 class="font-bold text-sm">Peringatan Kritis: Risiko Jamur</h3>
+                                <div class="flex items-center gap-2">
+                                    <h3 class="font-bold text-sm">Peringatan Kritis: Risiko Jamur</h3>
+                                    <span class="px-1.5 py-0.5 rounded bg-red-100 text-red-800 text-[9px] font-extrabold uppercase tracking-wider">Bypass (Tanpa Sensor)</span>
+                                </div>
                                 <p class="text-xs text-on-surface-variant">Kirim peringatan jika kadar air tertahan di ≤ {{ $settings['kadar_air_warning'] ?? 17 }}% (risiko jamur tinggi).</p>
                             </div>
                             <label class="switch">
-                                <input type="checkbox" name="notif_jamur" value="1" {{ ($settings['notif_jamur'] ?? '1') == '1' ? 'checked' : '' }} />
+                                <input type="checkbox" name="notif_jamur" value="1" {{ ($settings['notif_jamur'] ?? '0') == '1' ? 'checked' : '' }} />
                                 <span class="slider"></span>
                             </label>
                         </div>

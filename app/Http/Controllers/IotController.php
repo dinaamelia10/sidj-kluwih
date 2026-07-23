@@ -38,7 +38,7 @@ class IotController extends Controller
         Log::info("Data IoT Masuk & Tersimpan: ID={$dryingMonitor->id}, Suhu={$suhu}°C, KadarAir={$kadarAir}%");
 
         // 2. Ambil Parameter Pengaturan
-        $suhuMax = (float) Setting::getVal('suhu_max', 85);
+        $suhuMax = (float) Setting::getVal('suhu_max', 60);
         $kadarTarget = (float) Setting::getVal('kadar_air_target', 15);
         $kadarWarning = (float) Setting::getVal('kadar_air_warning', 17);
 
