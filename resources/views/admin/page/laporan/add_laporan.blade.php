@@ -1,315 +1,288 @@
-<!DOCTYPE html>
+{{-- ============================================================
+     MODAL: TAMBAH LAPORAN BARU (Responsive)
+     ============================================================ --}}
 
-<html class="light" lang="id">
+{{-- Overlay Modal --}}
+<div id="modalTambahLaporan"
+     class="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-md bg-on-surface/30 backdrop-blur-sm
+            opacity-0 pointer-events-none transition-all duration-300"
+     aria-modal="true" role="dialog">
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Tambah Laporan Baru | SIDJ-Kluwih</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "primary-container": "#2e7d32",
-                        "on-primary-fixed": "#002204",
-                        "surface-container-lowest": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "surface-dim": "#cfdaf2",
-                        "on-surface": "#111c2d",
-                        "on-secondary-fixed-variant": "#005313",
-                        "on-tertiary": "#ffffff",
-                        "error": "#ba1a1a",
-                        "on-error-container": "#93000a",
-                        "on-secondary-fixed": "#002204",
-                        "surface-variant": "#d8e3fb",
-                        "secondary-container": "#91f78e",
-                        "surface-tint": "#1b6d24",
-                        "outline": "#707a6c",
-                        "inverse-surface": "#263143",
-                        "on-surface-variant": "#40493d",
-                        "on-secondary": "#ffffff",
-                        "tertiary": "#6e5100",
-                        "on-tertiary-fixed": "#261a00",
-                        "on-primary-fixed-variant": "#005312",
-                        "on-tertiary-container": "#ffefd7",
-                        "tertiary-container": "#8c6800",
-                        "primary": "#0d631b",
-                        "surface-container-highest": "#d8e3fb",
-                        "surface-container-low": "#f0f3ff",
-                        "surface-bright": "#f9f9ff",
-                        "surface-container-high": "#dee8ff",
-                        "surface-container": "#e7eeff",
-                        "on-tertiary-fixed-variant": "#5c4300",
-                        "on-primary-container": "#cbffc2",
-                        "inverse-on-surface": "#ecf1ff",
-                        "inverse-primary": "#88d982",
-                        "secondary": "#006e1c",
-                        "secondary-fixed-dim": "#78dc77",
-                        "secondary-fixed": "#94f990",
-                        "background": "#f9f9ff",
-                        "on-secondary-container": "#00731e",
-                        "surface": "#f9f9ff",
-                        "tertiary-fixed": "#ffdfa0",
-                        "primary-fixed": "#a3f69c",
-                        "on-background": "#111c2d",
-                        "tertiary-fixed-dim": "#f8bd2a",
-                        "on-primary": "#ffffff",
-                        "outline-variant": "#bfcaba",
-                        "on-error": "#ffffff",
-                        "primary-fixed-dim": "#88d982"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "sm": "8px",
-                        "gutter": "20px",
-                        "container-margin": "24px",
-                        "xs": "4px",
-                        "md": "16px",
-                        "lg": "24px",
-                        "base": "4px",
-                        "xl": "40px"
-                    },
-                    "fontFamily": {
-                        "display": ["Inter"],
-                        "headline-lg": ["Inter"],
-                        "body-md": ["Inter"],
-                        "body-lg": ["Inter"],
-                        "title-lg": ["Inter"],
-                        "headline-md": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "label-md": ["Inter"]
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
+    {{-- Modal Container --}}
+    <div class="w-full sm:max-w-4xl bg-white/95 backdrop-blur-xl rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col
+                translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300
+                max-h-[92vh] sm:max-h-[90vh]"
+         id="modalContent">
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-    </style>
-</head>
-
-<body class="bg-background font-body-md text-on-background overflow-hidden">
-    <!-- Background Context (Blurred) -->
-    <div class="fixed inset-0 z-0 blur-sm pointer-events-none opacity-40">
-        <div class="w-full h-full bg-cover"
-            data-alt="A sophisticated agricultural data dashboard featuring complex charts, maps of corn fields, and a modern UI interface. The scene is dominated by soft greens and crisp whites, representing a data-driven high-tech farming management tool. Professional lighting creates a clean, administrative atmosphere."
-            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCb6i_FuqUmM3VvlEM9yPuwArtueB4z359UHZRpJqoELc_pDU1AxpP2_gAI-z8fCBh1z06FCGdTJaY1PwsiCuDaUYC1kQQ-Ild09-EOEDiXfpXlEojG_RaJgAeKj_nrrni1xkTV1fwOXSlC2wuKj1s5spzeF9gBLpmi9AbRFLWOVY72lM9RBK8cC9yxkIg1mOXkpYM04JUBGu_ZB9dbMmbV7iy_K_czO0HKuuh2APrmpfrpyu9IQeV7yQ')">
-        </div>
-    </div>
-    <!-- Modal Overlay -->
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-md bg-on-surface/20 backdrop-blur-sm">
-        <!-- Modal Container -->
-        <div
-            class="w-full max-w-4xl max-h-[921px] glass-panel rounded-xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
-            <!-- Header -->
-            <div
-                class="px-lg py-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low bg-primary-container/5">
-                <div class="flex items-center gap-sm">
-                    <div class="p-xs bg-primary/10 rounded-lg text-primary">
-                        <span class="material-symbols-outlined text-[32px]">analytics</span>
-                    </div>
-                    <div>
-                        <h1 class="font-headline-md text-headline-md text-on-surface">Tambah Laporan Baru</h1>
-                        <p class="font-label-md text-label-md text-on-surface-variant">Konfigurasi parameter laporan
-                            analitik jagung</p>
-                    </div>
+        {{-- Header --}}
+        <div class="px-md sm:px-lg py-md border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/50 flex-shrink-0">
+            <div class="flex items-center gap-sm">
+                <div class="p-xs bg-primary/10 rounded-lg text-primary hidden sm:flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[28px]">analytics</span>
                 </div>
-                <button class="p-xs hover:bg-surface-variant rounded-full transition-colors">
-                    <span class="material-symbols-outlined text-on-surface-variant">analytics</span>
-                </button>
+                <div>
+                    <h2 class="font-bold text-base sm:text-lg text-on-surface">Tambah Laporan Baru</h2>
+                    <p class="text-xs text-on-surface-variant hidden sm:block">Konfigurasi parameter laporan analitik jagung</p>
+                </div>
             </div>
-            <!-- Content Area (Scrollable) -->
-            <div class="flex-1 overflow-y-auto p-lg grid grid-cols-1 md:grid-cols-12 gap-lg">
-                <!-- Left: Form Controls -->
+            <button id="closeModal" type="button"
+                    class="p-xs hover:bg-surface-container rounded-full transition-colors text-on-surface-variant"
+                    title="Tutup">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        {{-- Form --}}
+        <form action="{{ route('admin.laporan.store') }}" method="POST" id="formLaporan" class="flex flex-col flex-1 min-h-0">
+            @csrf
+
+            {{-- Content Area (Scrollable) --}}
+            <div class="flex-1 overflow-y-auto p-md sm:p-lg grid grid-cols-1 md:grid-cols-12 gap-md sm:gap-lg">
+
+                {{-- Left: Form Controls --}}
                 <div class="md:col-span-7 space-y-md">
+
+                    {{-- Nama Petani --}}
+                    <div class="space-y-xs">
+                        <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Nama Petani <span class="text-error">*</span>
+                        </label>
+                        <input type="text" name="farmer_name" id="farmer_name" list="petaniDatalist"
+                               class="w-full h-11 px-4 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm @error('farmer_name') border-error @enderror"
+                               placeholder="Pilih atau ketik nama petani..."
+                               value="{{ old('farmer_name') }}">
+                        <datalist id="petaniDatalist">
+                            @if(isset($petaniList))
+                                @foreach($petaniList as $p)
+                                    <option value="{{ $p->nama }}">{{ $p->nama }} ({{ $p->wilayah ?? 'Kluwih' }})</option>
+                                @endforeach
+                            @endif
+                        </datalist>
+                        @error('farmer_name')
+                            <p class="text-error text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div class="grid grid-cols-2 gap-md">
-                        <!-- Report Type -->
+                        {{-- Jenis Laporan --}}
                         <div class="space-y-xs">
-                            <label
-                                class="font-label-md text-label-md text-on-surface-variant font-bold text-primary uppercase tracking-wider text-[11px]">Jenis
-                                Laporan</label>
-                            <select
-                                class="w-full h-12 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all">
-                                <option>Harian</option>
-                                <option>Mingguan</option>
-                                <option>Bulanan</option>
-                                <option>Tahunan</option>
+                            <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                                Jenis <span class="text-error">*</span>
+                            </label>
+                            <select name="jenis_laporan" id="jenis_laporan"
+                                    class="w-full h-11 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm">
+                                <option value="Harian"   {{ old('jenis_laporan') == 'Harian'   ? 'selected' : '' }}>Harian</option>
+                                <option value="Mingguan" {{ old('jenis_laporan') == 'Mingguan' ? 'selected' : '' }}>Mingguan</option>
+                                <option value="Bulanan"  {{ old('jenis_laporan') == 'Bulanan'  ? 'selected' : '' }}>Bulanan</option>
+                                <option value="Tahunan"  {{ old('jenis_laporan') == 'Tahunan'  ? 'selected' : '' }}>Tahunan</option>
                             </select>
                         </div>
-                        <!-- Category -->
+                        {{-- Kategori --}}
                         <div class="space-y-xs">
-                            <label
-                                class="font-label-md text-label-md text-on-surface-variant font-bold text-primary uppercase tracking-wider text-[11px]">Kategori</label>
-                            <select
-                                class="w-full h-12 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all">
-                                <option>Tonase Jagung</option>
-                                <option>Monitoring Suhu</option>
-                                <option>Harga Beli</option>
-                                <option>Kinerja Petani</option>
+                            <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                                Kategori <span class="text-error">*</span>
+                            </label>
+                            <select name="kategori" id="kategori"
+                                    class="w-full h-11 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm">
+                                <option value="Tonase Jagung"   {{ old('kategori') == 'Tonase Jagung'   ? 'selected' : '' }}>Tonase Jagung</option>
+                                <option value="Monitoring Suhu" {{ old('kategori') == 'Monitoring Suhu' ? 'selected' : '' }}>Monitoring Suhu</option>
+                                <option value="Harga Beli"      {{ old('kategori') == 'Harga Beli'      ? 'selected' : '' }}>Harga Beli</option>
+                                <option value="Kinerja Petani"  {{ old('kategori') == 'Kinerja Petani'  ? 'selected' : '' }}>Kinerja Petani</option>
                             </select>
                         </div>
                     </div>
-                    <!-- Date Range -->
+
+                    {{-- Tonase --}}
                     <div class="space-y-xs">
-                        <label
-                            class="font-label-md text-label-md text-on-surface-variant font-bold text-primary uppercase tracking-wider text-[11px]">Rentang
-                            Tanggal</label>
-                        <div class="grid grid-cols-2 gap-md items-center">
+                        <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Berat (Kg) <span class="text-error">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" name="tonnage" id="tonnage" min="0" step="1"
+                                   class="w-full h-11 pl-4 pr-14 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm @error('tonnage') border-error @enderror"
+                                   placeholder="Contoh: 150"
+                                   value="{{ old('tonnage') }}">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-on-surface-variant">Kg</span>
+                        </div>
+                        @error('tonnage')
+                            <p class="text-error text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Rentang Tanggal --}}
+                    <div class="space-y-xs">
+                        <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Rentang Tanggal <span class="text-error">*</span>
+                        </label>
+                        <div class="grid grid-cols-2 gap-md">
                             <div class="relative">
-                                <input
-                                    class="w-full h-12 pl-10 pr-sm rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all"
-                                    type="date" />
-                                <span
-                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">calendar_month</span>
+                                <input type="date" name="tanggal_mulai" id="tanggal_mulai"
+                                       class="w-full h-11 pl-9 pr-2 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm @error('tanggal_mulai') border-error @enderror"
+                                       value="{{ old('tanggal_mulai') }}">
+                                <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-base pointer-events-none">calendar_month</span>
+                                @error('tanggal_mulai')
+                                    <p class="text-error text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="relative">
-                                <input
-                                    class="w-full h-12 pl-10 pr-sm rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all"
-                                    type="date" />
-                                <span
-                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">event_repeat</span>
+                                <input type="date" name="tanggal_selesai" id="tanggal_selesai"
+                                       class="w-full h-11 pl-9 pr-2 rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm @error('tanggal_selesai') border-error @enderror"
+                                       value="{{ old('tanggal_selesai') }}">
+                                <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-base pointer-events-none">event_repeat</span>
+                                @error('tanggal_selesai')
+                                    <p class="text-error text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                     </div>
-                    <!-- Notes -->
+
+                    {{-- Keterangan --}}
                     <div class="space-y-xs">
-                        <label
-                            class="font-label-md text-label-md text-on-surface-variant font-bold text-primary uppercase tracking-wider text-[11px]">Keterangan
-                            / Catatan</label>
-                        <textarea
-                            class="w-full rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all"
-                            placeholder="Tambahkan konteks atau instruksi khusus untuk laporan ini..." rows="4"></textarea>
+                        <label class="block text-[10px] font-bold text-primary uppercase tracking-wider">
+                            Keterangan / Catatan
+                        </label>
+                        <textarea name="keterangan" id="keterangan" rows="3"
+                                  class="w-full rounded-lg border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all text-sm"
+                                  placeholder="Tambahkan konteks atau instruksi khusus...">{{ old('keterangan') }}</textarea>
                     </div>
                 </div>
-                <!-- Right: Preview Section (Bento Style) -->
-                <div
-                    class="md:col-span-5 bg-secondary-container/10 rounded-2xl p-lg border border-outline-variant/30 flex flex-col gap-lg">
+
+                {{-- Right: Preview Data (dinamis dari DB) — disembunyikan di mobile kecil --}}
+                <div class="md:col-span-5 bg-secondary-container/10 rounded-2xl p-md sm:p-lg border border-outline-variant/30 flex flex-col gap-md">
                     <div class="flex items-center gap-xs text-primary">
                         <span class="material-symbols-outlined text-[20px]">insights</span>
-                        <h3 class="font-title-lg text-title-lg">Preview Data</h3>
+                        <h3 class="font-bold text-sm sm:text-base">Preview Data</h3>
                     </div>
-                    <div class="flex-1 space-y-sm">
-                        <!-- Data Card 1 -->
-                        <div
-                            class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant/50 flex items-center justify-between shadow-sm">
-                            <div class="space-y-xs">
-                                <p
-                                    class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
-                                    Estimasi Tonase</p>
-                                <p class="font-headline-md text-headline-md text-primary font-bold">124.5 <span
-                                        class="text-label-md font-medium">Ton</span></p>
+                    <div class="grid grid-cols-2 md:grid-cols-1 gap-md flex-1">
+                        {{-- Estimasi Tonase --}}
+                        <div class="bg-white p-md rounded-xl border border-outline-variant/50 flex items-center justify-between shadow-sm">
+                            <div class="space-y-xs min-w-0">
+                                <p class="text-[9px] sm:text-[10px] text-on-surface-variant uppercase tracking-widest font-bold truncate">Berat Selesai</p>
+                                <p class="text-lg sm:text-2xl text-primary font-bold">
+                                    {{ number_format($previewTonase, 0, ',', '.') }}
+                                    <span class="text-xs font-medium text-on-surface-variant">Kg</span>
+                                </p>
                             </div>
-                            <div
-                                class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                <span class="material-symbols-outlined text-[20px]">monitoring</span></div>
+                            <div class="size-9 sm:size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <span class="material-symbols-outlined text-base sm:text-[20px]">monitoring</span>
+                            </div>
                         </div>
-                        <!-- Data Card 2 -->
-                        <div
-                            class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant/50 flex items-center justify-between shadow-sm">
-                            <div class="space-y-xs">
-                                <p
-                                    class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">
-                                    Fluktuasi Harga</p>
-                                <p class="font-headline-md text-headline-md text-tertiary font-bold">+250 <span
-                                        class="text-label-md font-medium">/kg</span></p>
+                        {{-- Fluktuasi Harga --}}
+                        <div class="bg-white p-md rounded-xl border border-outline-variant/50 flex items-center justify-between shadow-sm">
+                            <div class="space-y-xs min-w-0">
+                                <p class="text-[9px] sm:text-[10px] text-on-surface-variant uppercase tracking-widest font-bold truncate">Fluktuasi Harga</p>
+                                <p class="text-lg sm:text-2xl font-bold {{ $priceFluktuasi >= 0 ? 'text-primary' : 'text-error' }}">
+                                    {{ $priceFluktuasi >= 0 ? '+' : '' }}{{ number_format($priceFluktuasi, 0, ',', '.') }}
+                                    <span class="text-xs font-medium text-on-surface-variant">/kg</span>
+                                </p>
                             </div>
-                            <div
-                                class="size-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
-                                <span class="material-symbols-outlined text-[20px]">trending_up</span></div>
-                        </div>
-                        <!-- Visualizer Mockup -->
-                        <div class="pt-sm border-t border-outline-variant">
-                            <p class="font-label-md text-label-md text-on-surface-variant mb-xs">Status Pengeringan
-                                (Rerata)</p>
-                            <div class="w-full bg-surface-variant rounded-full overflow-hidden h-1.5">
-                                <div class="w-[72%] h-full bg-primary-container"></div>
-                            </div>
-                            <div class="flex justify-between mt-xs">
-                                <span class="font-label-sm text-label-sm text-on-surface-variant">72% Selesai</span>
-                                <span class="font-label-sm text-label-sm text-primary font-bold">Optimal</span>
+                            <div class="size-9 sm:size-10 rounded-full {{ $priceFluktuasi >= 0 ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error' }} flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-base sm:text-[20px]">{{ $priceFluktuasi >= 0 ? 'trending_up' : 'trending_down' }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-auto bg-primary-container/5 p-sm rounded-lg">
-                        <p class="font-label-sm text-label-sm text-on-surface-variant italic leading-tight">
-                            *Data di atas merupakan ringkasan otomatis berdasarkan rentang tanggal yang Anda pilih.
+                    {{-- Progress Pengeringan --}}
+                    <div class="pt-sm border-t border-outline-variant/30">
+                        <p class="text-xs text-on-surface-variant mb-xs font-medium">Status Pengeringan Bulan Ini</p>
+                        <div class="w-full bg-surface-variant rounded-full overflow-hidden h-2">
+                            <div class="h-full bg-primary rounded-full transition-all duration-700"
+                                 style="width: {{ $progressSelesai }}%"></div>
+                        </div>
+                        <div class="flex justify-between mt-xs">
+                            <span class="text-[10px] text-on-surface-variant">{{ $progressSelesai }}% Selesai</span>
+                            <span class="text-[10px] font-bold {{ $progressSelesai >= 80 ? 'text-primary' : ($progressSelesai >= 50 ? 'text-tertiary' : 'text-error') }}">
+                                {{ $progressSelesai >= 80 ? 'Optimal' : ($progressSelesai >= 50 ? 'Sedang' : 'Perlu Perhatian') }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="bg-primary/5 p-sm rounded-lg">
+                        <p class="text-[10px] text-on-surface-variant italic leading-tight">
+                            *Data ringkasan otomatis dari database bulan berjalan.
                         </p>
                     </div>
                 </div>
             </div>
-            <!-- Footer Actions -->
-            <div
-                class="px-lg py-md border-t border-outline-variant bg-surface-container-lowest flex justify-end items-center gap-md">
-                <button
-                    class="px-lg h-12 font-label-md text-label-md text-primary border border-primary hover:bg-primary/5 transition-all active:scale-95 rounded-xl">
+
+            {{-- Footer Actions --}}
+            <div class="px-md sm:px-lg py-md border-t border-outline-variant/20 bg-surface-container-lowest/50 flex justify-end items-center gap-md flex-shrink-0">
+                <button type="button" id="cancelModal"
+                        class="px-md sm:px-lg h-11 text-sm font-semibold text-primary border border-primary hover:bg-primary/5 transition-all active:scale-95 rounded-xl">
                     Batal
                 </button>
-                <button
-                    class="px-lg h-12 rounded-xl font-bold text-label-md text-on-primary bg-primary-container hover:bg-primary transition-all shadow-lg shadow-primary-container/20 active:scale-95 flex items-center gap-sm">
-                    <span class="material-symbols-outlined text-[20px]">save</span>
-                    Buat Laporan Sekarang
+                <button type="submit"
+                        class="px-md sm:px-lg h-11 rounded-xl font-bold text-sm text-on-primary bg-primary hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 flex items-center gap-sm">
+                    <span class="material-symbols-outlined text-[18px]">save</span>
+                    <span class="hidden xs:inline sm:inline">Buat Laporan</span>
+                    <span class="xs:hidden sm:hidden">Simpan</span>
                 </button>
             </div>
-        </div>
+        </form>
     </div>
-    <!-- Notification Toast (Hidden by default) -->
-    <div class="fixed bottom-lg right-lg z-[100] translate-y-20 opacity-0 transition-all duration-300 pointer-events-none"
-        id="toast">
-        <div
-            class="bg-inverse-surface text-inverse-on-surface px-lg py-sm rounded-lg shadow-xl flex items-center gap-md">
-            <span class="material-symbols-outlined text-primary-fixed">check_circle</span>
-            <span class="font-label-md text-label-md">Laporan sedang dikompilasi...</span>
-        </div>
-    </div>
-    <script>
-        // Simple Interaction logic for demo
-        const createBtn = document.querySelector('button.bg-primary-container');
-        const toast = document.getElementById('toast');
+</div>
 
-        createBtn.addEventListener('click', () => {
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
+@push('scripts')
+<script>
+(function () {
+    const modal        = document.getElementById('modalTambahLaporan');
+    const modalContent = document.getElementById('modalContent');
+    const btnOpen      = document.getElementById('btnTambahLaporan');
+    const btnFab       = document.getElementById('btnTambahLaporanFab');
+    const btnClose     = document.getElementById('closeModal');
+    const btnCancel    = document.getElementById('cancelModal');
 
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3000);
-        });
+    function openModal() {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+        // mobile: slide up; desktop: scale in
+        if (window.innerWidth < 640) {
+            modalContent.classList.remove('translate-y-full');
+            modalContent.classList.add('translate-y-0');
+        } else {
+            modalContent.classList.remove('sm:scale-95');
+            modalContent.classList.add('sm:scale-100');
+        }
+        document.body.style.overflow = 'hidden';
+    }
 
-        // Date input hover effect
-        document.querySelectorAll('input[type="date"]').forEach(input => {
-            input.addEventListener('focus', () => {
-                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#2e7d32';
-            });
-            input.addEventListener('blur', () => {
-                input.parentElement.querySelector('.material-symbols-outlined').style.color = '#707a6c';
-            });
-        });
-    </script>
-</body>
+    function closeModal() {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+        if (window.innerWidth < 640) {
+            modalContent.classList.add('translate-y-full');
+            modalContent.classList.remove('translate-y-0');
+        } else {
+            modalContent.classList.add('sm:scale-95');
+            modalContent.classList.remove('sm:scale-100');
+        }
+        document.body.style.overflow = '';
+    }
 
-</html>
+    if (btnOpen)   btnOpen.addEventListener('click', openModal);
+    if (btnFab)    btnFab.addEventListener('click', openModal);
+    if (btnClose)  btnClose.addEventListener('click', closeModal);
+    if (btnCancel) btnCancel.addEventListener('click', closeModal);
+
+    // Klik overlay untuk tutup
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // ESC untuk tutup
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Auto-buka modal jika ada error validasi
+    @if($errors->any())
+        openModal();
+    @endif
+
+    // Warna ikon date input saat focus
+    document.querySelectorAll('#formLaporan input[type="date"]').forEach(input => {
+        const icon = input.parentElement.querySelector('.material-symbols-outlined');
+        input.addEventListener('focus', () => { if (icon) icon.style.color = '#0d631b'; });
+        input.addEventListener('blur',  () => { if (icon) icon.style.color = '#707a6c'; });
+    });
+})();
+</script>
+@endpush

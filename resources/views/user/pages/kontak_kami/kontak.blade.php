@@ -1,302 +1,187 @@
 @extends('user.layout.master')
 
-@section('title', 'Hubungi Kami | SIDJ-Kluwih')
+@section('title', 'Hubungi Kami - SIDJ-Kluwih')
 
 @section('content')
-<!-- Menyuntikkan konfigurasi tema asli milikmu agar di-render oleh Tailwind CDN master -->
-<script>
-    try {
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "surface-dim": "#cfdaf2",
-                        "on-error": "#ffffff",
-                        "surface-container-highest": "#d8e3fb",
-                        "on-tertiary-fixed-variant": "#5c4300",
-                        "on-secondary-fixed": "#002204",
-                        "on-tertiary-fixed": "#261a00",
-                        "outline": "#707a6c",
-                        "surface-container-lowest": "#ffffff",
-                        "outline-variant": "#bfcaba",
-                        "tertiary": "#6e5100",
-                        "surface": "#f9f9ff",
-                        "secondary-fixed-dim": "#78dc77",
-                        "on-tertiary": "#ffffff",
-                        "on-secondary": "#ffffff",
-                        "surface-bright": "#f9f9ff",
-                        "on-primary": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "on-primary-fixed": "#002204",
-                        "secondary-fixed": "#94f990",
-                        "primary": "#0d631b",
-                        "tertiary-fixed-dim": "#f8bd2a",
-                        "surface-container": "#e7eeff",
-                        "on-surface": "#111c2d",
-                        "primary-container": "#2e7d32",
-                        "on-background": "#111c2d",
-                        "on-tertiary-container": "#ffefd7",
-                        "on-primary-fixed-variant": "#005312",
-                        "background": "#f9f9ff",
-                        "surface-container-high": "#dee8ff",
-                        "secondary": "#006e1c",
-                        "surface-variant": "#d8e3fb",
-                        "primary-fixed": "#a3f69c",
-                        "on-secondary-fixed-variant": "#005313",
-                        "on-secondary-container": "#00731e",
-                        "on-surface-variant": "#40493d",
-                        "on-primary-container": "#cbffc2",
-                        "surface-container-low": "#f0f3ff",
-                        "primary-fixed-dim": "#88d982",
-                        "inverse-primary": "#88d982",
-                        "inverse-on-surface": "#ecf1ff",
-                        "surface-tint": "#1b6d24",
-                        "on-error-container": "#93000a",
-                        "error": "#ba1a1a",
-                        "secondary-container": "#91f78e",
-                        "inverse-surface": "#263143",
-                        "tertiary-fixed": "#ffdfa0",
-                        "tertiary-container": "#8c6800"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "md": "16px",
-                        "base": "4px",
-                        "gutter": "20px",
-                        "container-margin": "24px",
-                        "sm": "8px",
-                        "xl": "40px",
-                        "xs": "4px",
-                        "lg": "24px"
-                    },
-                    "fontFamily": {
-                        "body-lg": ["Inter"],
-                        "title-lg": ["Inter"],
-                        "headline-md": ["Inter"],
-                        "headline-lg-mobile": ["Inter"],
-                        "display": ["Inter"],
-                        "body-md": ["Inter"],
-                        "label-sm": ["Inter"],
-                        "headline-lg": ["Inter"],
-                        "label-md": ["Inter"]
-                    },
-                    "fontSize": {
-                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                        "display": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
-                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}]
-                    }
-                },
-            },
-        }
-    } catch (_e) {}
-</script>
-
-<style>
-    .soft-shadow {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    }
-    .input-focus-effect:focus {
-        border-width: 2px;
-        border-color: #0d631b;
-        outline: none;
-    }
-    .glass-card {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(8px);
-    }
-</style>
-
-<main class="min-h-screen">
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden py-xl md:py-32 bg-surface-container-low">
-        <div class="relative z-10 max-w-7xl mx-auto px-container-margin text-center">
-            <h1 class="font-display text-display text-primary mb-md">Hubungi Kami</h1>
-            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+    {{-- Hero Section --}}
+    <section class="relative overflow-hidden py-16 md:py-24 bg-surface-container">
+        <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-16 text-center">
+            <span class="inline-block py-1 px-4 mb-4 rounded-full bg-secondary-container text-on-secondary-container font-semibold text-xs uppercase tracking-wider">Hubungi Kami</span>
+            <h1 class="text-4xl lg:text-5xl font-bold text-primary mb-4">Ada yang bisa kami bantu?</h1>
+            <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">
                 Kami hadir untuk membantu Anda mengoptimalkan hasil panen dan manajemen pasca-panen jagung dengan teknologi terkini.
             </p>
         </div>
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-secondary-container/20 to-transparent pointer-events-none"></div>
     </section>
 
-    <!-- Main Contact Section -->
-    <section class="py-xl max-w-7xl mx-auto px-container-margin">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg lg:gap-xl">
-            <!-- Contact Form -->
-            <div class="lg:col-span-7 bg-surface p-lg md:p-xl rounded-xl border border-outline-variant soft-shadow">
-                <h2 class="font-headline-lg text-headline-lg mb-lg text-on-surface">Kirim Pesan</h2>
-                <form class="space-y-md">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+    {{-- Main Contact Section --}}
+    <section class="py-12 max-w-7xl mx-auto px-6 lg:px-16">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+            {{-- Contact Form --}}
+            <div class="lg:col-span-7 bg-surface p-8 rounded-2xl border border-outline-variant soft-shadow">
+                <h2 class="text-2xl font-bold mb-6 text-on-surface">Kirim Pesan</h2>
+
+                {{-- Flash success --}}
+                @if(session('success'))
+                <div class="mb-4 flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-xl p-4">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">check_circle</span>
+                    <span class="font-semibold text-sm">{{ session('success') }}</span>
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="mb-4 bg-error-container text-on-error-container rounded-xl p-4 text-sm">
+                    <ul class="list-disc pl-4 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form id="contact-form" action="{{ route('user.kontak.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block font-label-md text-label-md mb-xs text-on-surface-variant" for="name">Nama Lengkap</label>
-                            <input class="w-full rounded-lg border-outline-variant bg-surface-container-lowest py-sm px-md input-focus-effect font-body-md" id="name" placeholder="John Doe" type="text"/>
+                            <label class="block text-sm font-medium mb-1.5 text-on-surface-variant" for="contact-name">Nama Lengkap <span class="text-error">*</span></label>
+                            <input class="w-full rounded-xl border border-outline-variant bg-surface-container py-3 px-4 input-focus-effect text-sm @error('name') border-error @enderror"
+                                   id="contact-name" name="name" placeholder="Budi Santoso" type="text"
+                                   value="{{ old('name') }}" required/>
+                            @error('name')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block font-label-md text-label-md mb-xs text-on-surface-variant" for="email">Email</label>
-                            <input class="w-full rounded-lg border-outline-variant bg-surface-container-lowest py-sm px-md input-focus-effect font-body-md" id="email" placeholder="john@example.com" type="email"/>
+                            <label class="block text-sm font-medium mb-1.5 text-on-surface-variant" for="contact-email">Email</label>
+                            <input class="w-full rounded-xl border border-outline-variant bg-surface-container py-3 px-4 input-focus-effect text-sm @error('email') border-error @enderror"
+                                   id="contact-email" name="email" placeholder="budi@contoh.com" type="email"
+                                   value="{{ old('email') }}"/>
+                            @error('email')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
                     </div>
                     <div>
-                        <label class="block font-label-md text-label-md mb-xs text-on-surface-variant" for="subject">Subjek</label>
-                        <input class="w-full rounded-lg border-outline-variant bg-surface-container-lowest py-sm px-md input-focus-effect font-body-md" id="subject" placeholder="Pertanyaan seputar layanan" type="text"/>
+                        <label class="block text-sm font-medium mb-1.5 text-on-surface-variant" for="contact-subject">Subjek</label>
+                        <input class="w-full rounded-xl border border-outline-variant bg-surface-container py-3 px-4 input-focus-effect text-sm"
+                               id="contact-subject" name="subject" placeholder="Pertanyaan seputar layanan dryer" type="text"
+                               value="{{ old('subject') }}"/>
                     </div>
                     <div>
-                        <label class="block font-label-md text-label-md mb-xs text-on-surface-variant" for="message">Pesan</label>
-                        <textarea class="w-full rounded-lg border-outline-variant bg-surface-container-lowest py-sm px-md input-focus-effect font-body-md" id="message" placeholder="Tuliskan pesan Anda di sini..." rows="5"></textarea>
+                        <label class="block text-sm font-medium mb-1.5 text-on-surface-variant" for="contact-message">Pesan <span class="text-error">*</span></label>
+                        <textarea class="w-full rounded-xl border border-outline-variant bg-surface-container py-3 px-4 input-focus-effect text-sm resize-none @error('message') border-error @enderror"
+                                  id="contact-message" name="message" placeholder="Tuliskan pesan Anda di sini..." rows="5"
+                                  required>{{ old('message') }}</textarea>
+                        @error('message')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
-                    <button class="w-full md:w-auto px-xl py-md bg-primary text-on-primary rounded-lg font-title-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-sm" type="submit">
+                    <button class="w-full md:w-auto px-8 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                            id="contact-submit" type="submit">
                         <span>Kirim Pesan</span>
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">send</span>
+                        <span class="material-symbols-outlined text-sm">send</span>
                     </button>
                 </form>
             </div>
 
-            <!-- Contact Info -->
-            <div class="lg:col-span-5 flex flex-col gap-lg">
-                <div class="bg-surface-container-low p-lg rounded-xl border border-outline-variant">
-                    <h3 class="font-title-lg text-title-lg mb-lg text-primary">Informasi Kontak</h3>
-                    <ul class="space-y-lg">
-                        <li class="flex gap-md">
-                            <div class="bg-secondary-container p-sm rounded-lg flex items-center justify-center h-fit">
+            {{-- Contact Info --}}
+            <div class="lg:col-span-5 flex flex-col gap-5">
+                <div class="bg-surface-container p-6 rounded-2xl border border-outline-variant">
+                    <h3 class="font-bold text-lg mb-5 text-primary">Informasi Kontak</h3>
+                    <ul class="space-y-5">
+                        <li class="flex gap-4">
+                            <div class="bg-secondary-container p-2.5 rounded-xl flex items-center justify-center h-fit flex-shrink-0">
                                 <span class="material-symbols-outlined text-on-secondary-container">location_on</span>
                             </div>
                             <div>
-                                <p class="font-label-md text-on-surface-variant">Alamat Kantor</p>
-                                <p class="font-body-md font-semibold">Jl. Pertanian Modern No. 45, Kediri, Jawa Timur</p>
+                                <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wide">Alamat Kantor</p>
+                                <p class="text-sm font-semibold mt-0.5">Desa Kluwih, Kec. Bandar, Kab. Batang, Jawa Tengah</p>
                             </div>
                         </li>
-                        <li class="flex gap-md">
-                            <div class="bg-secondary-container p-sm rounded-lg flex items-center justify-center h-fit">
+                        <li class="flex gap-4">
+                            <div class="bg-secondary-container p-2.5 rounded-xl flex items-center justify-center h-fit flex-shrink-0">
                                 <span class="material-symbols-outlined text-on-secondary-container">call</span>
                             </div>
                             <div>
-                                <p class="font-label-md text-on-surface-variant">Telepon / WhatsApp</p>
-                                <p class="font-body-md font-semibold">+62 812-3456-7890</p>
+                                <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wide">Telepon / WhatsApp</p>
+                                <p class="text-sm font-semibold mt-0.5">Hubungi via kontak resmi</p>
                             </div>
                         </li>
-                        <li class="flex gap-md">
-                            <div class="bg-secondary-container p-sm rounded-lg flex items-center justify-center h-fit">
+                        <li class="flex gap-4">
+                            <div class="bg-secondary-container p-2.5 rounded-xl flex items-center justify-center h-fit flex-shrink-0">
                                 <span class="material-symbols-outlined text-on-secondary-container">mail</span>
                             </div>
                             <div>
-                                <p class="font-label-md text-on-surface-variant">Email</p>
-                                <p class="font-body-md font-semibold">halo@sidj-kluwih.com</p>
+                                <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wide">Email</p>
+                                <p class="text-sm font-semibold mt-0.5">info@sidj-kluwih.id</p>
                             </div>
                         </li>
-                        <li class="flex gap-md">
-                            <div class="bg-secondary-container p-sm rounded-lg flex items-center justify-center h-fit">
+                        <li class="flex gap-4">
+                            <div class="bg-secondary-container p-2.5 rounded-xl flex items-center justify-center h-fit flex-shrink-0">
                                 <span class="material-symbols-outlined text-on-secondary-container">schedule</span>
                             </div>
                             <div>
-                                <p class="font-label-md text-on-surface-variant">Jam Layanan</p>
-                                <p class="font-body-md font-semibold">Senin - Sabtu: 08.00 - 17.00 WIB</p>
+                                <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wide">Jam Layanan</p>
+                                <p class="text-sm font-semibold mt-0.5">Senin – Sabtu: 08.00 – 17.00 WIB</p>
                             </div>
                         </li>
                     </ul>
                 </div>
 
-                <!-- Map Placeholder -->
-                <div class="h-64 md:h-full min-h-[300px] rounded-xl overflow-hidden border border-outline-variant relative soft-shadow">
-                    <div class="absolute inset-0 bg-surface-container-highest flex items-center justify-center" data-location="Kediri, Jawa Timur">
-                        <img class="w-full h-full object-cover grayscale opacity-80 mix-blend-multiply" alt="Peta visualisasi Kediri" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEnmdHEojd05DhphlrWmSG6qVbJMjStG983EwBW4MmBdNsuVoKcZoy5eTQBDpzbwCCzcaVTqYf1kJ6PUOIVMCOgCbDxJpX3NlAZoHqARvectqxGS8gDONi3lbgrCZ-N1Z0EdTLCKEFK48PKW-vtwMubF49QpVRpHBOMNChxC6zqTJUaWPVg91l_WYrqvzFLNTKQt3FsDLUL1XjnMybcmMuUKT4PxNsuN7LL7JvGkom_zunZKeIMG2V4g"/>
-                    </div>
-                    <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur p-sm rounded-lg border border-outline shadow-lg">
-                        <p class="font-label-sm text-primary flex items-center gap-xs">
-                            <span class="material-symbols-outlined text-[16px]">map</span>
-                            Lihat di Google Maps
-                        </p>
+                {{-- Quick Links --}}
+                <div class="bg-primary p-6 rounded-2xl text-on-primary">
+                    <h3 class="font-bold text-lg mb-4">Akses Cepat</h3>
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('user.data_jagung') }}" class="flex items-center gap-2 text-on-primary/80 hover:text-on-primary text-sm transition-colors py-1">
+                            <span class="material-symbols-outlined text-sm">bar_chart</span> Lihat Data Jagung
+                        </a>
+                        <a href="{{ route('user.layanan') }}" class="flex items-center gap-2 text-on-primary/80 hover:text-on-primary text-sm transition-colors py-1">
+                            <span class="material-symbols-outlined text-sm">category</span> Eksplorasi Layanan
+                        </a>
+                        <a href="{{ route('admin.login') }}" class="flex items-center gap-2 text-on-primary/80 hover:text-on-primary text-sm transition-colors py-1">
+                            <span class="material-symbols-outlined text-sm">login</span> Login Admin Panel
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Technical Support Section -->
-    <section class="py-xl bg-surface-container">
-        <div class="max-w-7xl mx-auto px-container-margin">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-lg gap-md">
+    {{-- Technical Support Section --}}
+    <section class="py-12 bg-surface-container">
+        <div class="max-w-7xl mx-auto px-6 lg:px-16">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
                 <div>
-                    <h2 class="font-headline-lg text-on-surface">Technical Support</h2>
-                    <p class="font-body-md text-on-surface-variant">Bantuan khusus untuk operasional alat dan platform digital.</p>
+                    <h2 class="text-2xl font-bold text-on-surface">Technical Support</h2>
+                    <p class="text-on-surface-variant">Bantuan khusus untuk operasional alat dan platform digital.</p>
                 </div>
-                <button class="bg-secondary text-on-secondary px-lg py-sm rounded-full font-label-md flex items-center gap-sm hover:bg-on-secondary-container transition-colors">
-                    Buka Tiket Bantuan
-                    <span class="material-symbols-outlined text-[18px]">open_in_new</span>
-                </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-                <!-- Support Card 1 -->
-                <div class="bg-surface p-lg rounded-xl border border-outline-variant soft-shadow hover:translate-y-[-4px] transition-all duration-300">
-                    <div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center mb-md">
-                        <span class="material-symbols-outlined text-on-secondary-fixed">engineering</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                @php
+                    $supports = [
+                        ['icon'=>'engineering','bg'=>'bg-secondary-fixed','col'=>'text-on-secondary-fixed','t'=>'Panduan Smart Dryer','d'=>'Akses manual penggunaan dan tutorial perawatan rutin mesin pengering jagung pintar Anda.','link'=>'Unduh PDF','licon'=>'download'],
+                        ['icon'=>'monitoring','bg'=>'bg-tertiary-fixed','col'=>'text-on-tertiary-fixed','t'=>'Isu Dashboard Data','d'=>'Mengalami kendala sinkronisasi data real-time? Tim IT kami siap membantu integrasi sistem Anda.','link'=>'Hubungi Tim IT','licon'=>'chevron_right'],
+                        ['icon'=>'quiz','bg'=>'bg-primary-fixed','col'=>'text-on-primary-fixed','t'=>'Pusat Bantuan (FAQ)','d'=>'Temukan jawaban cepat untuk pertanyaan yang sering diajukan oleh mitra petani kami.','link'=>'Baca FAQ','licon'=>'help'],
+                    ];
+                @endphp
+                @foreach($supports as $s)
+                <div class="bg-surface p-6 rounded-2xl border border-outline-variant soft-shadow hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-10 h-10 rounded-full {{ $s['bg'] }} flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined {{ $s['col'] }}">{{ $s['icon'] }}</span>
                     </div>
-                    <h4 class="font-title-lg mb-sm">Panduan Smart Dryer</h4>
-                    <p class="font-body-md text-on-surface-variant mb-md">Akses manual penggunaan dan tutorial perawatan rutin mesin pengering jagung pintar Anda.</p>
-                    <a class="text-primary font-label-md flex items-center gap-xs hover:underline" href="#">
-                        Unduh PDF
-                        <span class="material-symbols-outlined text-[16px]">download</span>
+                    <h4 class="font-bold text-base mb-2 text-on-surface">{{ $s['t'] }}</h4>
+                    <p class="text-sm text-on-surface-variant mb-4 leading-relaxed">{{ $s['d'] }}</p>
+                    <a class="text-primary text-sm font-semibold flex items-center gap-1 hover:underline" href="#">
+                        {{ $s['link'] }}
+                        <span class="material-symbols-outlined text-sm">{{ $s['licon'] }}</span>
                     </a>
                 </div>
-                <!-- Support Card 2 -->
-                <div class="bg-surface p-lg rounded-xl border border-outline-variant soft-shadow hover:translate-y-[-4px] transition-all duration-300">
-                    <div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center mb-md">
-                        <span class="material-symbols-outlined text-on-tertiary-fixed">monitoring</span>
-                    </div>
-                    <h4 class="font-title-lg mb-sm">Isu Dashboard Data</h4>
-                    <p class="font-body-md text-on-surface-variant mb-md">Mengalami kendala sinkronisasi data real-time? Tim IT kami siap membantu integrasi sistem Anda.</p>
-                    <a class="text-primary font-label-md flex items-center gap-xs hover:underline" href="#">
-                        Hubungi Tim IT
-                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                    </a>
-                </div>
-                <!-- Support Card 3 -->
-                <div class="bg-surface p-lg rounded-xl border border-outline-variant soft-shadow hover:translate-y-[-4px] transition-all duration-300">
-                    <div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center mb-md">
-                        <span class="material-symbols-outlined text-on-primary-fixed">quiz</span>
-                    </div>
-                    <h4 class="font-title-lg mb-sm">Pusat Bantuan (FAQ)</h4>
-                    <p class="font-body-md text-on-surface-variant mb-md">Temukan jawaban cepat untuk pertanyaan yang sering diajukan oleh mitra petani kami.</p>
-                    <a class="text-primary font-label-md flex items-center gap-xs hover:underline" href="#">
-                        Baca FAQ
-                        <span class="material-symbols-outlined text-[16px]">help</span>
-                    </a>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
-</main>
 @endsection
 
 @push('scripts')
 <script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const btn = e.target.querySelector('button');
-        const originalContent = btn.innerHTML;
-        btn.innerHTML = '<span>Mengirim...</span>';
-        btn.disabled = true;
-        
-        setTimeout(() => {
-            btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span>Terkirim!</span>';
-            btn.classList.replace('bg-primary', 'bg-green-600');
-            
-            setTimeout(() => {
-                btn.innerHTML = originalContent;
-                btn.classList.replace('bg-green-600', 'bg-primary');
-                btn.disabled = false;
-                e.target.reset();
-            }, 3000);
-        }, 1500);
-    });
+    // Jika ada pesan sukses, scroll ke atas
+    @if(session('success'))
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    @endif
 </script>
 @endpush

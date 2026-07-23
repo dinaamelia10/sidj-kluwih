@@ -7,10 +7,10 @@
             <nav class="flex flex-wrap items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-2">
                 <a class="hover:text-primary" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-primary font-bold">Tonase</span>
+                <span class="text-primary font-bold">Berat Jagung</span>
             </nav>
-            <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Data Tonase Jagung</h1>
-            <p class="text-on-surface-variant font-body-md text-body-md mt-2">Pantau pencapaian dan performa tonase jagung secara real-time dengan tampilan yang responsif di desktop dan mobile.</p>
+            <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Data Berat Jagung</h1>
+            <p class="text-on-surface-variant font-body-md text-body-md mt-2">Pantau pencapaian dan performa berat jagung secara real-time dengan tampilan yang responsif di desktop dan mobile.</p>
         </div>
         <a href="{{ route('admin.tonase.add_tonase') }}" class="inline-flex items-center gap-sm rounded-2xl bg-primary-container px-lg py-3 text-on-primary-container font-bold transition hover:bg-primary active:scale-95 shadow-md">
             <span class="material-symbols-outlined">add_circle</span>
@@ -24,8 +24,8 @@
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant">Tonase Hari Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageToday, 1) }} <span class="text-title-lg">MT</span></h2>
+                    <p class="font-label-md text-label-md text-on-surface-variant">Berat Hari Ini</p>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageToday, 1) }} <span class="text-title-lg">Kg</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
                     <span class="material-symbols-outlined">today</span>
@@ -41,8 +41,8 @@
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant">Tonase Bulan Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisMonth, 1) }} <span class="text-title-lg">MT</span></h2>
+                    <p class="font-label-md text-label-md text-on-surface-variant">Berat Bulan Ini</p>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisMonth, 1) }} <span class="text-title-lg">Kg</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
                     <span class="material-symbols-outlined">calendar_month</span>
@@ -58,8 +58,8 @@
         <div class="bento-card p-lg flex flex-col justify-between relative overflow-hidden group">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="font-label-md text-label-md text-on-surface-variant">Tonase Tahun Ini</p>
-                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisYear, 0, '.', ',') }} <span class="text-title-lg">MT</span></h2>
+                    <p class="font-label-md text-label-md text-on-surface-variant">Berat Tahun Ini</p>
+                    <h2 class="font-display text-[32px] font-bold text-primary">{{ number_format($tonnageThisYear, 0, '.', ',') }} <span class="text-title-lg">Kg</span></h2>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
                     <span class="material-symbols-outlined">analytics</span>
@@ -67,7 +67,7 @@
             </div>
             <div class="mt-md inline-flex items-center gap-xs text-primary font-bold text-label-sm">
                 <span class="material-symbols-outlined text-sm">verified</span>
-                Target: {{ number_format($yearlyTarget, 0, '.', ',') }} MT
+                Target: {{ number_format($yearlyTarget, 0, '.', ',') }} Kg
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
     <div class="bento-card p-lg space-y-lg">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex flex-col gap-3">
-                <h2 class="font-title-lg text-title-lg font-bold">Tren Tonase Mingguan</h2>
+                <h2 class="font-title-lg text-title-lg font-bold">Tren Berat Mingguan</h2>
                 <span class="inline-flex items-center rounded-full bg-tertiary-fixed px-3 py-1 text-label-sm font-bold text-on-tertiary-fixed">Kualitas: Premium</span>
             </div>
             <div class="flex items-center gap-3">
@@ -101,14 +101,14 @@
                 @endforeach
             </div>
         </div>
-        <p id="chart-summary" class="text-label-sm text-on-surface-variant">Data untuk 7 Hari Terakhir — volume tonase dibandingkan tren.</p>
+        <p id="chart-summary" class="text-label-sm text-on-surface-variant">Data untuk 7 Hari Terakhir — volume berat dibandingkan tren.</p>
     </div>
 
     <!-- Panel Filter & Pencarian -->
     <div class="bento-card overflow-hidden">
         <div class="border-b border-outline-variant px-lg py-lg">
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <h2 class="font-title-lg text-title-lg font-bold">Rincian Transaksi Tonase</h2>
+                <h2 class="font-title-lg text-title-lg font-bold">Rincian Transaksi Berat Jagung</h2>
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div class="relative w-full sm:w-72">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
@@ -154,9 +154,9 @@
                         <th class="px-lg py-md font-semibold">Tanggal</th>
                         <th class="px-lg py-md font-semibold">Nama Petani</th>
                         <th class="px-lg py-md font-semibold">Varietas</th>
-                        <th class="px-lg py-md font-semibold text-right">Berat Kotor (MT)</th>
+                        <th class="px-lg py-md font-semibold text-right">Berat Kotor (Kg)</th>
                         <th class="px-lg py-md font-semibold text-center">Kadar Air (%)</th>
-                        <th class="px-lg py-md font-semibold text-right">Tonase Bersih (MT)</th>
+                        <th class="px-lg py-md font-semibold text-right">Berat Bersih (Kg)</th>
                         <th class="px-lg py-md font-semibold text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -185,15 +185,40 @@
                         </td>
                         <td class="px-lg py-md font-bold text-body-md text-right text-primary">{{ number_format($transaction->tonnage, 3) }}</td>
                         <td class="px-lg py-md">
-                            <div class="flex justify-center gap-sm">
-                                <button class="p-xs text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined">edit</span></button>
-                                <button class="p-xs text-error hover:text-error-container transition-colors"><span class="material-symbols-outlined">delete</span></button>
-                            </div>
+                            <div class="flex justify-center gap-sm">                                 
+                                @if($transaction->status === 'Proses')
+                                 <form action="{{ route('admin.tonase.update_status', $transaction->id) }}" method="POST" class="inline">
+                                     @csrf
+                                     @method('PATCH')
+                                     <input type="hidden" name="status" value="Selesai">
+                                     <button type="submit"
+                                             class="p-xs text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                             title="Tandai Selesai"
+                                             onclick="return confirmSubmit(event, 'Selesaikan Transaksi', 'Tandai transaksi {{ addslashes($transaction->farmer_name) }} sebagai Selesai?', 'Ya, Selesaikan', false)">
+                                         <span class="material-symbols-outlined">check_circle</span>
+                                     </button>
+                                 </form>
+                                 @else
+                                 <span class="p-xs text-primary/40" title="Sudah Selesai">
+                                     <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">check_circle</span>
+                                 </span>
+                                 @endif
+                                 <form action="{{ route('admin.tonase.destroy', $transaction->id) }}" method="POST" class="inline">
+                                     @csrf
+                                     @method('DELETE')
+                                     <button type="submit"
+                                             class="p-xs text-error hover:bg-error/10 rounded-lg transition-colors"
+                                             title="Hapus"
+                                             onclick="return confirmSubmit(event, 'Hapus Transaksi', 'Apakah Anda yakin ingin menghapus data transaksi {{ addslashes($transaction->farmer_name) }}? Data tidak bisa dipulihkan.')">
+                                         <span class="material-symbols-outlined">delete</span>
+                                     </button>
+                                 </form>
+                             </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="px-lg py-md text-center text-on-surface-variant italic">Belum ada riwayat transaksi tonase.</td>
+                        <td colspan="7" class="px-lg py-md text-center text-on-surface-variant italic">Belum ada riwayat transaksi berat jagung.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -216,7 +241,7 @@
                             <p class="text-label-sm text-on-surface-variant">{{ $transaction->created_at->format('d M Y') }}</p>
                         </div>
                     </div>
-                    <span class="rounded-full bg-primary/10 px-3 py-1 text-label-sm font-bold text-primary">{{ number_format($transaction->tonnage, 3) }} MT</span>
+                    <span class="rounded-full bg-primary/10 px-3 py-1 text-label-sm font-bold text-primary">{{ number_format($transaction->tonnage, 3) }} Kg</span>
                 </div>
                 <div class="grid grid-cols-2 gap-sm text-label-sm">
                     <div class="rounded-xl bg-surface-container-low px-3 py-3">
@@ -229,8 +254,27 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap justify-end gap-3 pt-sm">
-                    <button class="inline-flex items-center gap-xs text-primary font-bold"><span class="material-symbols-outlined text-sm">edit</span> Edit</button>
-                    <button class="inline-flex items-center gap-xs text-error font-bold"><span class="material-symbols-outlined text-sm">delete</span> Hapus</button>
+                    @if($transaction->status === 'Proses')
+                    <form action="{{ route('admin.tonase.update_status', $transaction->id) }}" method="POST" class="inline">
+                        @csrf
+                        @method('PATCH')
+                        <input type="hidden" name="status" value="Selesai">
+                        <button type="submit"
+                                class="inline-flex items-center gap-xs text-primary font-bold"
+                                onclick="return confirmSubmit(event, 'Selesaikan Transaksi', 'Tandai transaksi {{ addslashes($transaction->farmer_name) }} sebagai Selesai?', 'Ya, Selesaikan', false)">
+                            <span class="material-symbols-outlined text-sm">check_circle</span> Selesai
+                        </button>
+                    </form>
+                    @endif
+                    <form action="{{ route('admin.tonase.destroy', $transaction->id) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="inline-flex items-center gap-xs text-error font-bold"
+                                onclick="return confirmSubmit(event, 'Hapus Transaksi', 'Apakah Anda yakin ingin menghapus transaksi {{ addslashes($transaction->farmer_name) }}?')">
+                            <span class="material-symbols-outlined text-sm">delete</span> Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
             @endforeach
@@ -246,6 +290,26 @@
             {{ $transactions->links('pagination::tailwind') }}
         </div>
     </div>
+
+    {{-- Success Toast --}}
+    @if(session('success'))
+    <div id="successToast"
+         class="fixed bottom-6 right-6 z-[200] transition-all duration-500 opacity-0 translate-y-4">
+        <div class="bg-on-background text-white px-lg py-sm rounded-xl shadow-2xl flex items-center gap-md">
+            <span class="material-symbols-outlined text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <span class="text-sm font-medium">{{ session('success') }}</span>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const t = document.getElementById('successToast');
+            if (t) {
+                setTimeout(() => { t.classList.remove('opacity-0', 'translate-y-4'); }, 100);
+                setTimeout(() => { t.classList.add('opacity-0', 'translate-y-4'); }, 3500);
+            }
+        });
+    </script>
+    @endif
 </div>
 @endsection
 
@@ -289,7 +353,7 @@
     const chartBars = document.querySelectorAll('.chart-bar');
     if (trendRange && chartSummary) {
         trendRange.addEventListener('change', event => {
-            chartSummary.textContent = `Data untuk ${event.target.value} — volume tonase dibandingkan tren.`;
+            chartSummary.textContent = `Data untuk ${event.target.value} — volume berat dibandingkan tren.`;
         });
     }
 
@@ -299,12 +363,12 @@
         const value = parent.getAttribute('data-value');
         parent.addEventListener('mouseenter', () => {
             bar.classList.add('bg-primary-container');
-            chartSummary.textContent = `${parent.querySelector('p').innerText}: ${value} MT volume tonase minggu ini.`;
+            chartSummary.textContent = `${parent.querySelector('p').innerText}: ${value} Kg volume berat minggu ini.`;
         });
         parent.addEventListener('mouseleave', () => {
             bar.classList.remove('bg-primary-container');
             if (trendRange && chartSummary) {
-                chartSummary.textContent = `Data untuk ${trendRange.value} — volume tonase dibandingkan tren.`;
+                chartSummary.textContent = `Data untuk ${trendRange.value} — volume berat dibandingkan tren.`;
             }
         });
     });

@@ -1,8 +1,7 @@
 @extends('admin.layout.master')
 
 @section('content')
-<!-- Pembungkus Utama untuk Menjaga Struktur Grid & Kontainer Halaman -->
-<div class="p-lg md:p-xl space-y-lg max-w-[1400px] mx-auto w-full">
+<div class="space-y-lg">
 
     <!-- Flash Alert Sukses -->
     @if(session('success'))
@@ -12,18 +11,18 @@
     @endif
 
     <!-- Page Header -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+    <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <nav class="flex items-center gap-xs text-label-sm font-label-sm text-on-surface-variant mb-xs">
+            <nav class="flex flex-wrap items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-2">
                 <a class="hover:text-primary" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                 <span class="text-primary font-bold">Harga Beli</span>
             </nav>
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Harga Beli Resmi</h2>
+            <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Harga Beli Resmi</h1>
+            <p class="text-on-surface-variant font-body-md text-body-md mt-2">Kelola referensi harga beli jagung harian yang akan menjadi acuan bagi transaksi petani.</p>
         </div>
-        <!-- 👈 PERBAIKAN: Ditambahkan type="button" agar memicu JS, bukan reload halaman -->
-        <button type="button" onclick="toggleModal(true)" class="flex items-center justify-center gap-sm bg-primary text-on-primary px-lg py-md rounded-xl font-label-md text-label-md hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
-            <span class="material-symbols-outlined">add</span>
+        <button type="button" onclick="toggleModal(true)" class="inline-flex items-center gap-sm rounded-2xl bg-primary-container px-lg py-3 text-on-primary-container font-bold transition hover:bg-primary active:scale-95 shadow-md">
+            <span class="material-symbols-outlined">add_circle</span>
             Tambah Harga Baru
         </button>
     </div>
@@ -132,9 +131,9 @@
                     Berdasarkan tren pasokan jagung dari wilayah Kluwih dan sekitarnya, harga diprediksi akan mengalami kenaikan stabil sebesar 1.5% - 2% akibat penurunan volume panen raya.
                 </p>
             </div>
-            <button type="button" class="w-full py-md mt-lg border border-on-primary/30 rounded-xl text-on-primary font-label-md text-label-md hover:bg-on-primary/10 transition-colors">
+            <a href="{{ route('admin.laporan') }}" class="w-full py-md mt-lg border border-on-primary/30 rounded-xl text-on-primary font-label-md text-label-md hover:bg-on-primary/10 transition-colors block text-center">
                 Lihat Detail Laporan
-            </button>
+            </a>
         </div>
     </div>
 
@@ -179,8 +178,22 @@
                         </td>
                         <td class="px-lg py-md text-right">
                             <div class="flex items-center justify-end gap-sm">
-                                <button type="button" class="p-xs hover:bg-surface-container-high rounded text-on-surface-variant"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                                <button type="button" class="p-xs hover:bg-error-container/20 rounded text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                                <button type="button"
+                                        onclick="openEditModal({{ $history->id }}, '{{ addslashes($history->variety) }}', {{ $history->price }}, {{ $history->moisture_standard }}, '{{ addslashes($history->note ?? '') }}')"
+                                        class="p-xs hover:bg-surface-container-high rounded text-on-surface-variant transition-colors"
+                                        title="Edit Harga">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                </button>
+                                <form action="{{ route('admin.harga_beli.destroy', $history->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="p-xs hover:bg-error-container/20 rounded text-error transition-colors"
+                                            title="Hapus Harga"
+                                            onclick="return confirmSubmit(event, 'Hapus Data Harga', 'Apakah Anda yakin ingin menghapus data harga {{ addslashes($history->variety) }} (Rp {{ number_format($history->price, 0, ',', '.') }})?')">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -203,15 +216,15 @@
     </div>
 </div>
 
-<!-- Pop-up Modal Container (FORM DINAMIS TOTAL) -->
+<!-- Pop-up Modal Container (FORM DINAMIS TAMBAH / EDIT) -->
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-md hidden" id="add-price-modal">
     <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-md" onclick="toggleModal(false)"></div>
     <div class="relative w-full max-w-lg bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden flex flex-col">
         <div class="p-lg border-b border-outline-variant/30">
             <div class="flex justify-between items-start">
                 <div>
-                    <h3 class="font-headline-md text-headline-md text-on-surface">Tambah Harga Beli Baru</h3>
-                    <p class="text-body-md text-on-surface-variant mt-xs">Perbarui harga pasar harian untuk referensi transaksi petani.</p>
+                    <h3 class="font-headline-md text-headline-md text-on-surface" id="modal-title">Tambah Harga Beli Baru</h3>
+                    <p class="text-body-md text-on-surface-variant mt-xs" id="modal-subtitle">Perbarui harga pasar harian untuk referensi transaksi petani.</p>
                 </div>
                 <button type="button" class="p-xs hover:bg-surface-container-high rounded-full transition-colors" onclick="toggleModal(false)">
                     <span class="material-symbols-outlined">close</span>
@@ -220,11 +233,13 @@
         </div>
         
         <!-- FORM TARGET BACKEND -->
-        <form action="{{ route('admin.harga_beli.store_harga') }}" method="POST">
+        <form id="price-form" action="{{ route('admin.harga_beli.store_harga') }}" method="POST">
             @csrf
+            <div id="method-container"></div>
+
             <div class="p-lg space-y-lg overflow-y-auto max-h-[70vh] no-scrollbar">
                 <div class="bg-secondary-container/30 p-md rounded-lg border border-secondary/20 flex items-center gap-md">
-                    <div class="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center text-secondary">
+                    <div class="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center text-secondary flex-shrink-0">
                         <span class="material-symbols-outlined">monitoring</span>
                     </div>
                     <div>
@@ -235,25 +250,30 @@
                 
                 <div class="grid grid-cols-1 gap-md">
                     <div class="flex flex-col gap-xs">
-                        <label class="text-label-md font-semibold text-on-surface-variant">Varietas Jagung</label>
+                        <div class="flex justify-between items-center">
+                            <label class="text-label-md font-semibold text-on-surface-variant">Varietas Jagung <span class="text-error">*</span></label>
+                            <button type="button" onclick="toggleVarietyModal(true)" class="text-primary text-label-sm font-bold hover:underline flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[14px]">settings</span> Kelola
+                            </button>
+                        </div>
                         <select id="variety" name="variety" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20" required>
-                            <option value="Pioneer P35">Pioneer P35</option>
-                            <option value="NK Sumo">NK Sumo</option>
-                            <option value="Bisi 18">Bisi 18</option>
+                            @foreach($varieties as $var)
+                                <option value="{{ $var->name }}">{{ $var->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="flex flex-col gap-xs">
-                        <label class="text-label-md font-semibold text-on-surface-variant">Harga Beli per KG</label>
+                        <label class="text-label-md font-semibold text-on-surface-variant">Harga Beli per KG <span class="text-error">*</span></label>
                         <div class="relative">
                             <span class="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">Rp</span>
-                            <input id="price" name="price" class="w-full pl-xl pr-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" required placeholder="Contoh: 4900"/>
+                            <input id="price" name="price" class="w-full pl-xl pr-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" min="0" required placeholder="Contoh: 4900"/>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 gap-md">
                         <div class="flex flex-col gap-xs">
-                            <label class="text-label-md font-semibold text-on-surface-variant">Standar Kadar Air</label>
+                            <label class="text-label-md font-semibold text-on-surface-variant">Standar Kadar Air <span class="text-error">*</span></label>
                             <div class="relative">
-                                <input id="moisture_standard" name="moisture_standard" class="w-full pr-xl pl-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" required value="14"/>
+                                <input id="moisture_standard" name="moisture_standard" class="w-full pr-xl pl-md py-sm bg-surface-container-low border-outline-variant rounded-lg focus:ring-primary/20" type="number" step="0.1" required value="14"/>
                                 <span class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant font-medium">%</span>
                             </div>
                         </div>
@@ -266,11 +286,63 @@
             </div>
             <div class="p-lg bg-surface-container-low flex items-center justify-end gap-md">
                 <button type="button" class="px-lg py-md text-on-surface-variant font-label-md hover:bg-surface-container-high rounded-lg transition-colors" onclick="toggleModal(false)">Batal</button>
-                <button type="submit" class="px-lg py-md bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all shadow-md">Simpan Harga Baru</button>
+                <button type="submit" id="btn-submit-modal" class="px-lg py-md bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all shadow-md">Simpan Harga Baru</button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Pop-up Modal Container (KELOLA VARIETAS) -->
+<div class="fixed inset-0 z-[110] flex items-center justify-center p-md hidden" id="variety-modal">
+    <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-md" onclick="toggleVarietyModal(false)"></div>
+    <div class="relative w-full max-w-md bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden flex flex-col">
+        <div class="p-lg border-b border-outline-variant/30">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Kelola Varietas</h3>
+                    <p class="text-body-md text-on-surface-variant mt-xs">Tambah atau hapus varietas jagung.</p>
+                </div>
+                <button type="button" class="p-xs hover:bg-surface-container-high rounded-full transition-colors" onclick="toggleVarietyModal(false)">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-lg space-y-md">
+            <form action="{{ route('admin.variety.store') }}" method="POST" class="flex gap-2 mb-4">
+                @csrf
+                <input type="text" name="name" class="w-full bg-surface-container-low border-outline-variant rounded-lg py-sm px-md focus:ring-primary/20" placeholder="Nama varietas baru..." required>
+                <button type="submit" class="px-md py-sm bg-primary text-on-primary font-bold rounded-lg hover:brightness-110 transition-all whitespace-nowrap">Tambah</button>
+            </form>
+
+            <div class="border border-outline-variant/30 rounded-lg overflow-hidden max-h-60 overflow-y-auto">
+                <table class="w-full text-left">
+                    <tbody class="divide-y divide-outline-variant/20">
+                        @forelse($varieties as $var)
+                        <tr class="hover:bg-surface-container-low/30">
+                            <td class="px-md py-sm text-body-md font-medium text-on-surface">{{ $var->name }}</td>
+                            <td class="px-md py-sm text-right">
+                                <form action="{{ route('admin.variety.destroy', $var->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-xs hover:bg-error-container/20 rounded text-error transition-colors" title="Hapus" onclick="return confirmSubmit(event, 'Hapus Varietas', 'Apakah Anda yakin ingin menghapus varietas {{ addslashes($var->name) }}?')">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="2" class="px-md py-sm text-center text-on-surface-variant italic">Belum ada varietas.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('styles')
@@ -304,12 +376,71 @@
     });
 
     const modal = document.getElementById('add-price-modal');
+    const form  = document.getElementById('price-form');
+    const modalTitle = document.getElementById('modal-title');
+    const modalSubtitle = document.getElementById('modal-subtitle');
+    const methodContainer = document.getElementById('method-container');
+    const btnSubmit = document.getElementById('btn-submit-modal');
+    const storeUrl = "{{ route('admin.harga_beli.store_harga') }}";
+    const updateUrlBase = "{{ url('/admin/harga-beli') }}";
+
     function toggleModal(show) {
         if (show) {
+            // Default: mode Tambah
+            form.action = storeUrl;
+            methodContainer.innerHTML = '';
+            modalTitle.textContent = 'Tambah Harga Beli Baru';
+            modalSubtitle.textContent = 'Perbarui harga pasar harian untuk referensi transaksi petani.';
+            btnSubmit.textContent = 'Simpan Harga Baru';
+
+            // Reset form
+            form.reset();
+            document.getElementById('moisture_standard').value = 14;
+
             modal.classList.remove('hidden');
         } else {
             modal.classList.add('hidden');
         }
+    }
+
+    const varietyModal = document.getElementById('variety-modal');
+    function toggleVarietyModal(show) {
+        if (show) {
+            varietyModal.classList.remove('hidden');
+        } else {
+            varietyModal.classList.add('hidden');
+        }
+    }
+
+    function openEditModal(id, variety, price, moisture, note) {
+        form.action = updateUrlBase + '/' + id;
+        methodContainer.innerHTML = '<input type="hidden" name="_method" value="PUT">';
+        modalTitle.textContent = 'Edit Harga Beli Jagung';
+        modalSubtitle.textContent = 'Ubah rincian harga beli resmi untuk varietas ' + variety;
+        btnSubmit.textContent = 'Simpan Perubahan';
+
+        // Set value
+        const varietySelect = document.getElementById('variety');
+        if (varietySelect) {
+            let found = false;
+            for (let i = 0; i < varietySelect.options.length; i++) {
+                if (varietySelect.options[i].value === variety) {
+                    varietySelect.selectedIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                const newOpt = new Option(variety, variety, true, true);
+                varietySelect.add(newOpt);
+            }
+        }
+
+        document.getElementById('price').value = price;
+        document.getElementById('moisture_standard').value = moisture;
+        document.getElementById('note').value = note || '';
+
+        modal.classList.remove('hidden');
     }
 </script>
 @endpush

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Monitoring Mesin</title>
+    <!-- Library Eksternal -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- TEMA TERANG (LIGHT MODE - DEFAULT) --- */
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --card-text: #0f172a;
+            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --temp-color: #e11d48;
+            --success-color: #059669;
+            --warning-color: #e11d48;
+            --header-box-bg: #ffffff;
+            --header-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --select-bg: #f8fafc;
+            --font-ui: 'Rajdhani', sans-serif;
+            --font-num: 'Share Tech Mono', monospace;
+        }
+
+        /* --- TEMA GELAP (DARK MODE) --- */
+        [data-theme="dark"] {
+            --bg-color: #0b0f19;
+            --card-bg: #151a22;
+            --card-text: #ffffff;
+            --border-color: #232a35;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --temp-color: #ff0055;
+            --success-color: #00e676;
+            --warning-color: #ff0055;
+            --header-box-bg: #151a22;
+            --header-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --select-bg: #0b0f19;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 40px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- HEADER UTAMA & LAYOUT SEJAJAR --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-center-box {
+            background-color: var(--header-box-bg);
+            padding: 15px 35px;
+            border-radius: 16px;
+            box-shadow: var(--header-box-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin: 0 auto;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            height: 75px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+            color: var(--card-text);
+        }
+
+        .badge {
+            background-color: var(--border-color);
+            font-size: 0.85rem;
+            padding: 3px 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            color: var(--card-text);
+        }
+
+        .header-right-box {
+            background-color: var(--header-box-bg);
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: var(--header-box-shadow);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: absolute;
+            right: 0;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            background-color: var(--card-bg);
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .status-pill .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success-color);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--success-color);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn {
+            background-color: var(--card-bg);
+            color: var(--card-text);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .top-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .bottom-row {
+            display: flex;
+            gap: 25px;
+        }
+
+        .bottom-row .card {
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            color: var(--card-text);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+
+        .main-value-container {
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* --- CHART HEADER & FILTER WAKTU --- */
+        .chart-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chart-title {
+            color: var(--temp-color);
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .time-filter-select {
+            background-color: var(--select-bg);
+            border: 1px solid var(--border-color);
+            color: var(--card-text);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .chart-container {
+            height: 280px;
+            width: 100%;
+        }
+
+        .gauge-wrapper {
+            position: relative;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .gauge-inner-text {
+            position: absolute;
+            bottom: 15px;
+            text-align: center;
+        }
+
+        .gauge-inner-val {
+            font-family: var(--font-num);
+            font-size: 2.5rem;
+            color: var(--card-text);
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .gauge-inner-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        .gauge-minmax {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px;
+            font-family: var(--font-num);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: -10px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .control-label {
+            font-size: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .mqtt-status {
+            font-family: var(--font-num);
+            color: var(--success-color);
+            font-size: 2.2rem;
+            margin-top: 5px;
+            text-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* --- STYLING RUNNING TIME & KONTROL MANUAL --- */
+        .runtime-box {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .runtime-title {
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .runtime-value {
+            font-family: var(--font-num);
+            color: var(--card-text);
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .btn-timer {
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .btn-start {
+            background-color: #059669;
+            color: #fff;
+            border-color: #059669;
+        }
+
+        .btn-start:hover {
+            opacity: 0.9;
+        }
+
+        .btn-stop {
+            background-color: #e11d48;
+            color: #fff;
+            border-color: #e11d48;
+        }
+
+        .btn-stop:hover {
+            opacity: 0.9;
+        }
+
+        .btn-reset {
+            background-color: transparent;
+            color: var(--card-text);
+        }
+
+        .btn-reset:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-clear {
+            margin-top: 10px;
+            background-color: transparent;
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear:hover {
+            background-color: var(--warning-color);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        @keyframes blink-alert {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .alert-active {
+            animation: blink-alert 1s infinite;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER: LOGO & JUDUL DI TENGAH, STATUS & MODE DI KANAN -->
+    <div class="header">
+        <div class="header-center-box">
+            <div class="logo-container">
+                <img src="logo_undip.png" alt="Logo Universitas Diponegoro" class="logo-img">
+                <img src="logo_kkn.png" alt="Logo KKN-T Desa Kluwih" class="logo-img">
+            </div>
+            <div class="title-wrapper">
+                <h1 class="header-title">MESIN PENGERING <span class="badge">DASHBOARD</span></h1>
+            </div>
+        </div>
+
+        <div class="header-right-box">
+            <div class="status-pill" id="conn-pill">
+                <div class="dot" id="conn-dot"></div> <span id="conn-text">MENUNGGU KONEKSI...</span>
+            </div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span> <span id="theme-text">Mode Gelap</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- BAGIAN KARTU ATAS -->
+    <div class="top-row">
+        <!-- KARTU SUHU / GAUGE -->
+        <div class="card">
+            <div class="card-header"><span style="color: var(--temp-color);">⏱️</span> <span
+                    class="card-title">TEMPERATURE</span></div>
+            <div class="main-value-container" style="justify-content: flex-start;">
+                <div class="gauge-wrapper">
+                    <canvas id="gaugeChart"></canvas>
+                    <div class="gauge-inner-text">
+                        <div class="gauge-inner-val" id="gauge-val">0.0</div>
+                        <div class="gauge-inner-label">CELSIUS</div>
+                    </div>
+                </div>
+                <div class="gauge-minmax"><span>0</span><span>70</span></div>
+            </div>
+        </div>
+
+        <!-- KARTU SYSTEM STATUS (DENGAN KONTROL DURASI WAKTU MANUAL) -->
+        <div class="card">
+            <div class="card-header"><span style="color: var(--success-color);" id="status-icon">⚡</span> <span
+                    class="card-title">SYSTEM STATUS</span></div>
+            <div class="control-panel">
+                <div class="control-label" id="status-label">MQTT CONNECTION</div>
+                <div class="mqtt-status" id="mqtt-status-text">DISCONNECTED</div>
+
+                <!-- Durasi Waktu Operasi Manual & Tombol Kontrol -->
+                <div class="runtime-box">
+                    <span class="runtime-title">Durasi Operasi</span>
+                    <span id="runtime-val" class="runtime-value">00:00:00</span>
+                </div>
+                <div class="timer-controls">
+                    <button class="btn-timer btn-start" onclick="startTimer()">Mulai</button>
+                    <button class="btn-timer btn-stop" onclick="stopTimer()">Berhenti</button>
+                    <button class="btn-timer btn-reset" onclick="resetTimer()">Ulang</button>
+                </div>
+
+                <button class="btn-clear" onclick="clearDashboardData()">🗑️ CLEAR DATA GRAFIK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BAGIAN GRAFIK BAWAH -->
+    <div class="bottom-row">
+        <div class="card">
+            <div class="chart-header-flex">
+                <h3 class="chart-title">TEMPERATURE HISTORY (REAL-TIME)</h3>
+                <div>
+                    <label for="timeRange"
+                        style="font-size: 0.9rem; color: var(--text-muted); margin-right: 8px;">Rentang Waktu:</label>
+                    <select id="timeRange" class="time-filter-select" onchange="changeTimeRange()">
+                        <option value="10">10 Menit</option>
+                        <option value="30">30 Menit</option>
+                        <option value="60" selected>1 Jam</option>
+                        <option value="120">2 Jam</option>
+                        <option value="180">3 Jam</option>
+                        <option value="240">4 Jam</option>
+                        <option value="300">5 Jam</option>
+                        <option value="360">6 Jam</option>
+                    </select>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="tempChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT TINGKAT LANJUT -->
+    <script>
+        // --- LOGIKA MANUAL RUNNING TIMER DENGAN LOCALSTORAGE ---
+        let totalSeconds = parseInt(localStorage.getItem('machine_runtime_seconds')) || 0;
+        let isRunning = localStorage.getItem('machine_timer_running') === 'true';
+        let timerInterval = null;
+
+        function formatTime(sec) {
+            const hours = Math.floor(sec / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (sec % 60).toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        function updateDisplay() {
+            document.getElementById('runtime-val').innerText = formatTime(totalSeconds);
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                localStorage.setItem('machine_timer_running', 'true');
+                timerInterval = setInterval(() => {
+                    totalSeconds++;
+                    localStorage.setItem('machine_runtime_seconds', totalSeconds);
+                    updateDisplay();
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            if (isRunning) {
+                isRunning = false;
+                localStorage.setItem('machine_timer_running', 'false');
+                clearInterval(timerInterval);
+            }
+        }
+
+        function resetTimer() {
+            stopTimer();
+            totalSeconds = 0;
+            localStorage.setItem('machine_runtime_seconds', 0);
+            updateDisplay();
+        }
+
+        // Inisialisasi timer saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            updateDisplay();
+            if (isRunning) {
+                timerInterval = setInterval(() => {
+                    totalSeconds++;
+                    localStorage.setItem('machine_runtime_seconds', totalSeconds);
+                    updateDisplay();
+                }, 1000);
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Mode Terang';
+            } else {
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Mode Gelap';
+            }
+        });
+
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const currentTheme = htmlEl.getAttribute('data-theme');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            if (currentTheme === 'dark') {
+                htmlEl.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Mode Gelap';
+            } else {
+                htmlEl.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Mode Terang';
+            }
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, get, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABrUnTyBhYrV6nF85gRrKlzAYJ2ZFLAGw",
+            authDomain: "dryerjagung-63ad6.firebaseapp.com",
+            databaseURL: "https://dryerjagung-63ad6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dryerjagung-63ad6",
+            storageBucket: "dryerjagung-63ad6.firebasestorage.app",
+            messagingSenderId: "289609597211",
+            appId: "1:289609597211:web:ed099c191423e2c06553be",
+            measurementId: "G-QMETET7CL3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const MAX_TEMP = 70.0;
+        const CRITICAL_TEMP = 60.0;
+        Chart.defaults.color = '#6b7280';
+        Chart.defaults.font.family = "'Rajdhani', sans-serif";
+
+        let masterDataHistory = [];
+        let selectedMinutes = 60;
+
+        const ctxTemp = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(ctxTemp, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#ff0055', backgroundColor: 'rgba(255, 0, 85, 0.1)', borderWidth: 2, fill: true, tension: 0.4 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#232a35', drawBorder: false } }, y: { min: 20, max: MAX_TEMP, grid: { color: '#232a35', drawBorder: false } } }, elements: { point: { radius: 0 } } }
+        });
+
+        const ctxGauge = document.getElementById('gaugeChart').getContext('2d');
+        const gaugeChart = new Chart(ctxGauge, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [0, MAX_TEMP], backgroundColor: ['#059669', '#1a202a'], borderWidth: 0, circumference: 180, rotation: 270, cutout: '82%' }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+
+        function updateGaugeColor(val) {
+            let color = '#059669'; // Hijau (Aman)
+            if (val >= 60) {
+                color = '#e11d48'; // Merah (Bahaya)
+            } else if (val >= 55) {
+                color = '#eab308'; // Kuning (Waspada)
+            }
+            gaugeChart.data.datasets[0].backgroundColor[0] = color;
+        }
+
+        function loadHistoryFromFirebase() {
+            const dbRef = ref(database);
+            get(child(dbRef, 'Suhu_Mesin/Atas')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const dataObj = snapshot.val();
+                    masterDataHistory = [];
+                    const keys = Object.keys(dataObj);
+                    const totalItems = keys.length;
+                    const now = new Date().getTime();
+
+                    keys.forEach((key, index) => {
+                        const val = parseFloat(dataObj[key]);
+                        if (!isNaN(val)) {
+                            const timeOffset = (totalItems - 1 - index) * 60000;
+                            const itemTime = new Date(now - timeOffset);
+
+                            masterDataHistory.push({
+                                timestamp: itemTime,
+                                timeStr: itemTime.getHours().toString().padStart(2, '0') + ':' + itemTime.getMinutes().toString().padStart(2, '0') + ':' + itemTime.getSeconds().toString().padStart(2, '0'),
+                                value: val
+                            });
+                        }
+                    });
+
+                    renderFilteredChart();
+
+                    if (masterDataHistory.length > 0) {
+                        const lastVal = masterDataHistory[masterDataHistory.length - 1].value;
+                        document.getElementById('gauge-val').innerText = lastVal.toFixed(1);
+                        let gaugeValue = lastVal > MAX_TEMP ? MAX_TEMP : lastVal;
+                        updateGaugeColor(lastVal);
+                        gaugeChart.data.datasets[0].data = [gaugeValue, MAX_TEMP - gaugeValue];
+                        gaugeChart.update();
+                    }
+                }
+            }).catch((error) => {
+                console.error("Gagal mengambil riwayat Firebase: ", error);
+            });
+        }
+
+        loadHistoryFromFirebase();
+
+        window.changeTimeRange = function () {
+            const selectEl = document.getElementById('timeRange');
+            selectedMinutes = parseInt(selectEl.value);
+            renderFilteredChart();
+        };
+
+        function renderFilteredChart() {
+            const now = new Date();
+            const limitTime = new Date(now.getTime() - (selectedMinutes * 60 * 1000));
+
+            const filtered = masterDataHistory.filter(item => item.timestamp >= limitTime);
+
+            tempChart.data.labels = filtered.map(item => item.timeStr);
+            tempChart.data.datasets[0].data = filtered.map(item => item.value);
+            tempChart.update();
+        }
+
+        function updateChartsUI(timeStr, value) {
+            const now = new Date();
+            masterDataHistory.push({
+                timestamp: now,
+                timeStr: timeStr,
+                value: value
+            });
+
+            renderFilteredChart();
+
+            let gaugeValue = value > MAX_TEMP ? MAX_TEMP : value;
+            let gaugeRem = MAX_TEMP - gaugeValue;
+            updateGaugeColor(value);
+            gaugeChart.data.datasets[0].data = [gaugeValue, gaugeRem];
+            gaugeChart.update();
+        }
+
+        function checkWarningCondition(val) {
+            const connPill = document.getElementById('conn-pill'), connText = document.getElementById('conn-text'), connDot = document.getElementById('conn-dot'), mqttStatusText = document.getElementById('mqtt-status-text'), statusLabel = document.getElementById('status-label'), statusIcon = document.getElementById('status-icon');
+            if (val >= CRITICAL_TEMP) {
+                connPill.style.borderColor = 'var(--warning-color)'; connPill.style.color = 'var(--warning-color)'; connPill.classList.add('alert-active');
+                connDot.style.backgroundColor = 'var(--warning-color)'; connDot.style.boxShadow = '0 0 12px var(--warning-color)'; connText.innerText = 'WARNING: SUHU >= 60°C!';
+                statusIcon.style.color = 'var(--warning-color)'; statusLabel.innerText = 'SYSTEM ALERT';
+                mqttStatusText.innerText = 'OVERHEAT DETECTED'; mqttStatusText.style.color = 'var(--warning-color)'; mqttStatusText.style.textShadow = '0 0 15px rgba(255, 0, 85, 0.8)'; mqttStatusText.classList.add('alert-active');
+            } else {
+                connPill.style.borderColor = 'var(--success-color)'; connPill.style.color = 'var(--success-color)'; connPill.classList.remove('alert-active');
+                connDot.style.backgroundColor = 'var(--success-color)'; connDot.style.boxShadow = '0 0 8px var(--success-color)'; connText.innerText = 'SYSTEM ONLINE';
+                statusIcon.style.color = 'var(--success-color)'; statusLabel.innerText = 'MQTT CONNECTION';
+                mqttStatusText.innerText = 'CONNECTED'; mqttStatusText.style.color = 'var(--success-color)'; mqttStatusText.style.textShadow = '0 0 10px rgba(0, 230, 118, 0.4)'; mqttStatusText.classList.remove('alert-active');
+            }
+        }
+
+        const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
+        const topicSuhu = 'pabrik/mesin/suhu_atas';
+        const client = mqtt.connect(brokerUrl);
+
+        client.on('connect', function () {
+            checkWarningCondition(0);
+            client.subscribe(topicSuhu);
+        });
+
+        client.on('message', function (topic, message) {
+            if (topic === topicSuhu) {
+                const val = parseFloat(message.toString());
+                if (!isNaN(val)) {
+                    document.getElementById('gauge-val').innerText = val.toFixed(1);
+                    const now = new Date();
+                    const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0') + ':' + now.getSeconds().toString().padStart(2, '0');
+                    updateChartsUI(timeStr, val);
+                    checkWarningCondition(val);
+                }
+            }
+        });
+
+        window.clearDashboardData = function () {
+            if (!confirm("Apakah kamu yakin ingin menghapus data grafik di layar DAN DI FIREBASE?")) return;
+
+            masterDataHistory = [];
+            tempChart.data.labels = [];
+            tempChart.data.datasets[0].data = [];
+            tempChart.update();
+
+            const dbRef = ref(database, 'Suhu_Mesin/Atas');
+            remove(dbRef).then(() => {
+                alert("Berhasil! Riwayat data di Firebase telah dihapus.");
+            }).catch((error) => {
+                alert("Gagal menghapus data di Firebase: " + error);
+                console.error(error);
+            });
+        };
+    </script>
+</body>
+
+</html>

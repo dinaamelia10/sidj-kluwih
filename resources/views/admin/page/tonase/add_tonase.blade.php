@@ -1,17 +1,14 @@
 @extends('admin.layout.master')
 
 @section('content')
-<!-- Background Dashboard Layer (Simplified Representation for Context) -->
+<!-- Background Dashboard Layer -->
 <div class="flex">
-    <!-- Main Content Canvas (Blurred/Background context) -->
     <div class="flex-1 p-lg">
-        <!-- Dashboard Stats Grid (Background) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-lg">
             <div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm h-32"></div>
             <div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm h-32"></div>
             <div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm h-32"></div>
         </div>
-        <!-- Table Container (Background) -->
         <div class="bg-white rounded-xl border border-outline-variant shadow-sm overflow-hidden h-96"></div>
     </div>
 </div>
@@ -27,114 +24,161 @@
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
                 </div>
                 <div>
-                    <h3 class="font-headline-md text-headline-md font-bold text-on-surface">Tambah Data Tonase Jagung</h3>
+                    <h3 class="font-headline-md text-headline-md font-bold text-on-surface">Tambah Data Berat Jagung</h3>
                     <p class="text-on-surface-variant font-label-md">Catat setoran jagung baru ke sistem manajemen kluwih.</p>
                 </div>
             </div>
-            <button class="p-base hover:bg-surface-container-high rounded-full transition-colors" onclick="closeModal()">
+            <a href="{{ route('admin.tonase-jagung') }}" class="p-base hover:bg-surface-container-high rounded-full transition-colors">
                 <span class="material-symbols-outlined">close</span>
-            </button>
+            </a>
         </div>
-        
+
         <!-- Modal Content (Form) -->
         <div class="p-lg space-y-lg overflow-y-auto max-h-[70vh]">
-            <form class="grid grid-cols-1 md:grid-cols-2 gap-x-lg gap-y-md">
+            @if ($errors->any())
+            <div class="bg-error-container text-on-error-container rounded-xl p-md text-sm">
+                <ul class="list-disc pl-4 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            <form
+                action="{{ route('admin.tonase.store') }}"
+                method="POST"
+                class="grid grid-cols-1 md:grid-cols-2 gap-x-lg gap-y-md"
+            >
+                @csrf
+
                 <!-- Farmer Name -->
                 <div class="col-span-1 md:col-span-2">
-                    <label class="block font-label-md text-on-surface-variant mb-sm">Nama Petani</label>
+                    <label class="block font-label-md text-on-surface-variant mb-sm">
+                        Nama Petani <span class="text-error">*</span>
+                    </label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">person_search</span>
-                        <select class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
-                            <option disabled="" selected="">Cari atau pilih nama petani...</option>
-                            <option>Ahmad Subagyo (Kelompok Tani Merdeka)</option>
-                            <option>Siti Aminah (Kelompok Tani Hijau)</option>
-                            <option>Bambang Prakoso (Mitra Mandiri)</option>
+                        @if($petaniList->count() > 0)
+                        <select name="farmer_name"
+                                class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none @error('farmer_name') border-error @enderror">
+                            <option value="" disabled {{ old('farmer_name') ? '' : 'selected' }}>Pilih nama petani...</option>
+                            @foreach($petaniList as $petani)
+                                <option value="{{ $petani->nama }}" {{ old('farmer_name') == $petani->nama ? 'selected' : '' }}>
+                                    {{ $petani->nama }} — {{ $petani->wilayah ?? 'Kluwih' }}
+                                </option>
+                            @endforeach
                         </select>
+                        @else
+                        <input type="text" name="farmer_name"
+                               class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary @error('farmer_name') border-error @enderror"
+                               placeholder="Masukkan nama petani..."
+                               value="{{ old('farmer_name') }}">
+                        @endif
                         <span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                     </div>
+                    @error('farmer_name')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
-                <!-- Corn Variety -->
-                <div class="col-span-1">
-                    <label class="block font-label-md text-on-surface-variant mb-sm">Varietas Jagung</label>
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">grass</span>
-                        <select class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
-                            <option>Pioneer P35</option>
-                            <option>NK Sumo</option>
-                            <option>Bisi 18</option>
-                            <option>Advanta ADV 777</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
-                    </div>
-                </div>
+
                 <!-- Deposit Date -->
                 <div class="col-span-1">
-                    <label class="block font-label-md text-on-surface-variant mb-sm">Tanggal Setoran</label>
+                    <label class="block font-label-md text-on-surface-variant mb-sm">
+                        Tanggal Setoran <span class="text-error">*</span>
+                    </label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">calendar_today</span>
-                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" type="date" value="2026-07-14"/>
+                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary @error('tanggal_mulai') border-error @enderror"
+                               type="date"
+                               name="tanggal_mulai"
+                               value="{{ old('tanggal_mulai', date('Y-m-d')) }}">
                     </div>
+                    @error('tanggal_mulai')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
+
                 <!-- Gross Weight -->
                 <div class="col-span-1">
-                    <label class="block font-label-md text-on-surface-variant mb-sm">Berat Kotor (MT)</label>
+                    <label class="block font-label-md text-on-surface-variant mb-sm">
+                        Berat Bersih (Kg) <span class="text-error">*</span>
+                    </label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">scale</span>
-                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" placeholder="0.00" step="0.01" type="number"/>
+                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary @error('tonnage') border-error @enderror"
+                               name="tonnage"
+                               id="input-tonnage"
+                               placeholder="0.00"
+                               step="0.01"
+                               min="0"
+                               type="number"
+                               value="{{ old('tonnage') }}">
                     </div>
+                    @error('tonnage')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
-                <!-- Moisture Content -->
+
+                <!-- Moisture Content (informational only, not saved separately) -->
                 <div class="col-span-1">
                     <label class="block font-label-md text-on-surface-variant mb-sm">Kadar Air (%)</label>
                     <div class="relative">
                         <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">humidity_mid</span>
-                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary" id="input-moisture" step="0.1" type="number" value="14.0"/>
+                        <input class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary"
+                               id="input-moisture"
+                               step="0.1"
+                               type="number"
+                               placeholder="14.0"
+                               value="{{ old('moisture', '14.0') }}">
                     </div>
+                    <p class="text-xs text-on-surface-variant mt-1">Catatan informasi saja — tidak disimpan sebagai kolom terpisah.</p>
                 </div>
-                <!-- Warehouse Location -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block font-label-md text-on-surface-variant mb-sm">Lokasi Gudang Penyimpanan</label>
+
+                <!-- Keterangan -->
+                <div class="col-span-1">
+                    <label class="block font-label-md text-on-surface-variant mb-sm">Keterangan</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-outline">warehouse</span>
-                        <select class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
-                            <option>Gudang A - Kapasitas Utama</option>
-                            <option>Gudang B - Buffer Stock</option>
-                            <option>Gudang C - Pengeringan</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute right-md top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                        <span class="material-symbols-outlined absolute left-md top-3 text-outline">notes</span>
+                        <textarea name="keterangan"
+                                  class="w-full pl-xl pr-md py-md bg-surface-container-low border border-outline-variant rounded-lg focus:border-primary focus:ring-1 focus:ring-primary resize-none"
+                                  rows="2"
+                                  placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
                     </div>
                 </div>
+
+                {{-- Pricing Insight Section --}}
+                <div class="col-span-1 md:col-span-2 bg-surface-container-high rounded-xl p-lg border-l-4 border-primary flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+                    <div class="space-y-xs">
+                        <div class="flex items-center gap-sm text-on-surface-variant">
+                            <span class="material-symbols-outlined text-sm">calculate</span>
+                            <span class="font-label-sm uppercase tracking-wider">Kalkulasi Estimasi Nilai</span>
+                        </div>
+                        <div class="flex items-baseline gap-md">
+                            <h4 class="text-title-lg font-bold text-primary" id="estimasiHarga">Rp 0<span class="text-sm font-normal text-on-surface-variant">/kg</span></h4>
+                        </div>
+                        <p class="text-xs text-outline italic leading-tight">Estimasi nilai total berdasarkan berat & harga pasar terkini.</p>
+                    </div>
+                    <div class="text-right w-full md:w-auto">
+                        <div class="text-label-sm text-outline">Estimasi Nilai Total</div>
+                        <div class="text-headline-md font-bold text-primary" id="estimasiTotal">Rp --</div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="col-span-1 md:col-span-2 flex flex-col md:flex-row gap-md justify-end">
+                    <a href="{{ route('admin.tonase-jagung') }}"
+                       class="px-lg py-md rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors text-center">
+                        Batal
+                    </a>
+                    <button type="submit"
+                            class="px-xl py-md rounded-lg font-bold bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-md">
+                        <span class="material-symbols-outlined text-[20px]">save</span>
+                        Simpan Data Jagung
+                    </button>
+                </div>
+
             </form>
-            
-            <!-- Pricing Insight Section -->
-            <div class="bg-surface-container-high rounded-xl p-lg border-l-4 border-primary mt-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
-                <div class="space-y-xs">
-                    <div class="flex items-center gap-sm text-on-surface-variant">
-                        <span class="material-symbols-outlined text-sm">calculate</span>
-                        <span class="font-label-sm uppercase tracking-wider">Kalkulasi Otomatis (Estimasi)</span>
-                    </div>
-                    <div class="flex items-baseline gap-md">
-                        <h4 class="text-title-lg font-bold text-primary">IDR 4.250<span class="text-sm font-normal text-on-surface-variant">/kg</span></h4>
-                        <div class="px-sm py-xs bg-primary text-on-primary rounded text-[10px] font-bold">BASE 14% KA</div>
-                    </div>
-                    <p class="text-xs text-outline italic leading-tight">Harga menyesuaikan kadar air & standar industri terkini.</p>
-                </div>
-                <div class="text-right w-full md:w-auto">
-                    <div class="text-label-sm text-outline">Estimasi Tonase Bersih</div>
-                    <div class="text-headline-md font-bold text-on-surface-variant">-- MT</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Modal Footer -->
-        <div class="p-lg bg-surface border-t border-outline-variant flex flex-col md:flex-row gap-md justify-end">
-            <button class="px-lg py-md rounded-lg font-bold text-on-surface-variant hover:bg-surface-container-high transition-colors order-2 md:order-1" onclick="closeModal()">
-                Batal
-            </button>
-            <button class="px-xl py-md rounded-lg font-bold bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-md shadow-primary/20 order-1 md:order-2 flex items-center justify-center gap-md">
-                <span class="material-symbols-outlined text-[20px]">save</span>
-                Simpan Data Jagung
-            </button>
         </div>
     </div>
 </div>
@@ -154,31 +198,54 @@
 
 @push('scripts')
 <script>
-    // Micro-interactions for form inputs
-    document.querySelectorAll('input, select').forEach(input => {
-        input.addEventListener('focus', () => {
-            input.parentElement.classList.add('shadow-sm');
-        });
-        input.addEventListener('blur', () => {
-            input.parentElement.classList.remove('shadow-sm');
-        });
-    });
+    // Harga pasar terkini dari server
+    const marketPricePerKg = {{ \App\Models\MarketPrice::latest()->first()?->price ?? 0 }};
 
-    // Simple moisture input logic simulation
+    const tonnageInput = document.getElementById('input-tonnage');
     const moistureInput = document.getElementById('input-moisture');
-    moistureInput.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
+    const estimasiHarga = document.getElementById('estimasiHarga');
+    const estimasiTotal = document.getElementById('estimasiTotal');
+
+    function updateEstimasi() {
+        const ton = parseFloat(tonnageInput?.value || 0);
+        const moisture = parseFloat(moistureInput?.value || 14);
+
+        // Harga disesuaikan kadar air: jika KA > 14%, ada potongan 1% per 1% KA di atas standar
+        let adjustedPrice = marketPricePerKg;
+        if (moisture > 14) {
+            adjustedPrice = marketPricePerKg * (1 - ((moisture - 14) * 0.01));
+        }
+
+        const totalNilai = ton * adjustedPrice; // berat dalam kg
+
+        if (estimasiHarga) {
+            estimasiHarga.innerHTML = 'Rp ' + adjustedPrice.toLocaleString('id-ID', {maximumFractionDigits: 0})
+                + '<span class="text-sm font-normal text-on-surface-variant">/kg</span>';
+        }
+        if (estimasiTotal) {
+            estimasiTotal.textContent = ton > 0
+                ? 'Rp ' + totalNilai.toLocaleString('id-ID', {maximumFractionDigits: 0})
+                : 'Rp --';
+        }
+    }
+
+    tonnageInput?.addEventListener('input', updateEstimasi);
+    moistureInput?.addEventListener('input', () => {
+        const val = parseFloat(moistureInput.value);
         if (val > 25) {
             moistureInput.classList.add('text-error', 'border-error');
         } else {
             moistureInput.classList.remove('text-error', 'border-error');
         }
+        updateEstimasi();
     });
 
-    // Function to handle modal closing
-    function closeModal() {
-        const modal = document.getElementById('modal-container');
-        modal.style.display = 'none';
-    }
+    updateEstimasi();
+
+    // Micro-interactions for form inputs
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('focus', () => input.parentElement.classList.add('shadow-sm'));
+        input.addEventListener('blur', () => input.parentElement.classList.remove('shadow-sm'));
+    });
 </script>
 @endpush
