@@ -199,7 +199,7 @@
                 <div class="bg-secondary-fixed-dim h-full rounded-full shadow-lg transition-all duration-700"
                      style="width: {{ $monthlyProgress }}%"></div>
             </div>
-            <p class="text-white/60 text-[10px] mt-2">{{ $totalTonaseFormatted }} Kg / 500 Kg target</p>
+            <p class="text-white/60 text-[10px] mt-2">{{ $totalTonaseFormatted }} Kg / {{ number_format($monthlyTarget, 0, ',', '.') }} Kg target</p>
         </div>
         <a href="#riwayat-laporan" class="relative z-10 w-full mt-lg py-3 bg-white text-primary font-bold rounded-xl hover:bg-secondary-container transition-colors text-sm text-center block">
             Lihat Detail Laporan

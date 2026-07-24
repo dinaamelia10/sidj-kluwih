@@ -47,7 +47,7 @@ class IotController extends Controller
         // A. Peringatan Suhu Tinggi
         if (Setting::getVal('notif_suhu_tinggi') == '1' && $suhu > $suhuMax) {
             // Gunakan template darurat atau fallback hardcoded
-            $pesan = "⚠️ *PERINGATAN KRITIS: SUHU TERLALU PANAS* ⚠️\n\nSuhu pada $batchId saat ini mencapai *$suhu °C* (Batas maksimal: $suhuMax °C).\nBisa merusak jagung! Segera turunkan api kompor.\n\n_SIDJ Kluwih_";
+            $pesan = "⚠️ *PERINGATAN KRITIS: SUHU TERLALU PANAS* ⚠️\n\nSuhu pada $batchId saat ini mencapai *$suhu °C* (Batas maksimal: $suhuMax °C).\nBisa merusak jagung! Segera turunkan api kompor.\n\n_SIJALU-Kluwih_";
             WhatsAppService::sendToAdmins($pesan);
         }
 

@@ -1,6 +1,6 @@
 @extends('user.layout.master')
 
-@section('title', 'Tentang Kami - SIDJ-Kluwih')
+@section('title', 'Tentang Kami - SIJALU-Kluwih')
 
 @section('content')
     {{-- Hero Section --}}
@@ -14,7 +14,7 @@
                     Menghubungkan <span class="text-secondary italic">Tradisi</span> dengan Teknologi Modern
                 </h1>
                 <p class="text-lg text-on-surface-variant mb-8 max-w-xl leading-relaxed">
-                    SIDJ-Kluwih lahir dari visi untuk mentransformasi sektor agrikultur lokal menjadi ekosistem digital yang efisien, transparan, dan berkelanjutan. Kami menyediakan solusi data terpadu untuk memberdayakan petani jagung di Kluwih.
+                    SIJALU-Kluwih lahir dari visi untuk mentransformasi sektor agrikultur lokal menjadi ekosistem digital yang efisien, transparan, dan berkelanjutan. Kami menyediakan solusi data terpadu untuk memberdayakan petani jagung di Kluwih.
                 </p>
                 <div class="flex flex-wrap gap-4">
                     <a href="{{ route('user.layanan') }}" class="bg-primary text-on-primary px-6 py-3 rounded-xl font-semibold text-sm hover:bg-primary-container hover:scale-105 active:scale-95 transition-all shadow-lg">
@@ -29,8 +29,8 @@
             <div class="order-1 md:order-2 relative reveal active" style="transition-delay:200ms">
                 <div class="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3 scale-95 hover:rotate-0 hover:scale-100 duration-500 transition-all border border-outline-variant">
                     <img class="w-full h-full object-cover"
-                         alt="Platform digital pertanian jagung"
-                         src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=700&q=80">
+                         alt="Foto alat asli SIJALU-Kluwih"
+                         src="{{ asset('alat.jpg') }}">
                 </div>
                 <div class="absolute -bottom-8 -left-8 glass-card p-5 rounded-2xl shadow-xl hidden lg:flex items-center gap-4 z-10">
                     <div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center text-on-secondary-container">

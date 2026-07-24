@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="relative w-full md:w-2/5 flex justify-center">
-        <img class="h-56 md:h-64 object-contain" data-alt="Ilustrasi sistem pengering jagung pintar modern" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDymiH7TdgxUiggd1QulpfnU9hQ6zFijUt8TN42F-v294Qs-O4ZNzyaQBVkUUJm9PeuR6_4OnZyEHw1lkuWxUBHDuVHJd2kzs7Q5Sv8jSvu74F0aALBBr74rsOy0KDaPRsla-2xzLBAycBlTOsb-0oCmjpuUMMh423OXCX0eJlNd7U6E2UyA2P1R8TzO0-9Mp0IcwOgqeE3QaWimGfOQZcbGu1eI80XpKqiO8fIDXRjhMQTUwGLWF2GMQ"/>
+        <img class="h-56 md:h-64 object-cover rounded-2xl shadow-lg border border-white/20" alt="Foto alat asli SIJALU-Kluwih" src="{{ asset('alat.jpg') }}"/>
     </div>
 </section>
 

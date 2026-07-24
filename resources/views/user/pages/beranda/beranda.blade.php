@@ -1,6 +1,6 @@
 @extends('user.layout.master')
 
-@section('title', 'SIDJ-Kluwih | Platform Agri-Tech Jagung')
+@section('title', 'SIJALU-Kluwih | Platform Agri-Tech Jagung')
 
 @section('content')
     {{-- Hero Section --}}
@@ -67,20 +67,22 @@
                         <div class="bg-surface rounded-xl p-4 border border-outline-variant flex flex-col gap-1">
                             <span class="material-symbols-outlined text-primary">thermostat</span>
                             <p class="text-xs text-on-surface-variant uppercase tracking-wide mt-1">Suhu Dryer</p>
-                            <p class="text-2xl font-bold text-primary">80°C</p>
-                            <p class="text-xs text-secondary">Status Optimal</p>
+                            <p class="text-2xl font-bold text-primary" id="visitor-temp">{{ number_format($currentTemperature, 1) }}°C</p>
+                            <p class="text-xs {{ $currentTemperature >= 60 ? 'text-error font-bold animate-pulse' : 'text-secondary' }}" id="visitor-temp-status">
+                                {{ $currentTemperature >= 60 ? 'Suhu Tinggi (Bahaya)' : 'Status Optimal' }}
+                            </p>
                         </div>
                         <div class="bg-surface rounded-xl p-4 border border-outline-variant flex flex-col gap-1">
                             <span class="material-symbols-outlined text-tertiary">water_drop</span>
                             <p class="text-xs text-on-surface-variant uppercase tracking-wide mt-1">Kadar Air</p>
-                            <p class="text-2xl font-bold text-on-surface">14%</p>
-                            <p class="text-xs text-on-surface-variant">Target: ≤ 14%</p>
+                            <p class="text-2xl font-bold text-on-surface" id="visitor-moisture">{{ $activeSession ? number_format($currentMoisture, 1) . '%' : 'Standby' }}</p>
+                            <p class="text-xs text-on-surface-variant">Target: ≤ 15%</p>
                         </div>
                         <div class="bg-surface rounded-xl p-4 border border-outline-variant flex flex-col gap-1">
                             <span class="material-symbols-outlined text-secondary">scale</span>
                             <p class="text-xs text-on-surface-variant uppercase tracking-wide mt-1">Tonase Aktif</p>
-                            <p class="text-2xl font-bold text-on-surface">4.200 Kg</p>
-                            <p class="text-xs text-on-surface-variant">Batch berjalan</p>
+                            <p class="text-2xl font-bold text-on-surface" id="visitor-tonnage">{{ $activeSession && $activeTonnage > 0 ? number_format($activeTonnage, 0, ',', '.') . ' Kg' : 'Standby' }}</p>
+                            <p class="text-xs text-on-surface-variant truncate max-w-full" id="visitor-batch">{{ $activeBatchName }}</p>
                         </div>
                         <div class="bg-secondary-container rounded-xl p-4 flex flex-col gap-1">
                             <span class="material-symbols-outlined text-on-secondary-container">payments</span>
@@ -202,4 +204,44 @@
             </div>
         </div>
     </section>
+
+    @push('scripts')
+        <!-- MQTT.js library -->
+        <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
+                const topicSuhu = 'pabrik/mesin/suhu_atas';
+                const client = mqtt.connect(brokerUrl);
+
+                const tempEl = document.getElementById('visitor-temp');
+                const statusEl = document.getElementById('visitor-temp-status');
+
+                client.on('connect', function () {
+                    console.log('MQTT Visitor Connected!');
+                    client.subscribe(topicSuhu);
+                });
+
+                client.on('message', function (topic, message) {
+                    if (topic === topicSuhu) {
+                        const val = parseFloat(message.toString());
+                        if (!isNaN(val)) {
+                            if (tempEl) {
+                                tempEl.innerText = val.toFixed(1) + '°C';
+                            }
+                            if (statusEl) {
+                                if (val >= 60) {
+                                    statusEl.innerText = 'Suhu Tinggi (Bahaya)';
+                                    statusEl.className = 'text-xs text-error font-bold animate-pulse';
+                                } else {
+                                    statusEl.innerText = 'Status Optimal';
+                                    statusEl.className = 'text-xs text-secondary';
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    @endpush
 @endsection

@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Atur Ulang Kata Sandi - SIDJ-Kluwih</title>
+    <title>Atur Ulang Kata Sandi - SIJALU-Kluwih</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
     <link
@@ -199,7 +199,7 @@
                         <span class="material-symbols-outlined text-white text-[40px]"
                             style="font-variation-settings: 'FILL' 1;">eco</span>
                     </div>
-                    <h1 class="font-title-lg text-title-lg text-primary tracking-tight">SIDJ-Kluwih</h1>
+                    <h1 class="font-title-lg text-title-lg text-primary tracking-tight">SIJALU-Kluwih</h1>
                 </div>
                 <!-- Form Header -->
                 <div class="mb-lg">

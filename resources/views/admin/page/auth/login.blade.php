@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Login - SIDJ-Kluwih</title>
+    <title>Login - SIJALU-Kluwih</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
         rel="stylesheet" />
@@ -155,12 +155,8 @@
             <div
                 class="absolute bottom-0 left-0 w-64 h-64 bg-secondary-container/30 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2">
             </div>
-            <header class="relative z-10 flex items-center gap-sm">
-                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                    <span class="material-symbols-outlined text-on-primary"
-                        style="font-variation-settings: 'FILL' 1;">eco</span>
-                </div>
-                <span class="font-headline-md text-headline-md text-primary tracking-tight">SIDJ-Kluwih</span>
+            <header class="relative z-10 flex items-center">
+                <img class="h-11 w-auto object-contain" src="{{ asset('logo.png') }}" alt="Logo SIJALU-Kluwih">
             </header>
             <div class="relative z-10 flex flex-col items-center justify-center grow">
                 <!-- Illustration Container -->
@@ -168,8 +164,8 @@
                     <div
                         class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl bg-white/40 p-md border border-white/60">
                         <img class="w-full h-full object-cover rounded-xl"
-                            data-alt="A clean, modern flat vector illustration of an expansive green corn field under a clear soft blue sky. In the foreground, a sleek, high-tech industrial corn dryer machine with metallic surfaces and digital displays stands prominently. The style is professional Agri-Tech SaaS, utilizing a soft green and white color palette with minimalist lines and soft ambient lighting to convey growth and technological reliability."
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9jVrK1Jgk2ZPan0ahe9aIE6KeMfZSsAa0g3XXzd_iq81MJFos_TRo6hQQI7ufQKLCJvc6RN8ARFfm08MEIf7tBPbOyCa0ZD4xmiCYeX0AllQzzfHJPFrYHV312ZYB6napbma_fYrh2IU-GR7oIoUKb8888anbcy-YShJJ2LKfdipP0Z-U-66XVerXwGsontvLNSG12SJFNkG1rXI3YOrco6KKzud3-Siovaa0ijAknafVUkt7iJbLqw" />
+                            alt="Foto alat asli SIJALU-Kluwih"
+                            src="{{ asset('alat.jpg') }}" />
                     </div>
                 </div>
                 <div class="mt-xl max-w-lg text-center">
@@ -197,12 +193,8 @@
             <div class="w-full max-w-[440px] space-y-xl">
                 <!-- Brand Mobile Header -->
                 <div class="flex flex-col items-center md:items-start space-y-md">
-                    <div class="md:hidden flex items-center gap-xs mb-md">
-                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                            <span class="material-symbols-outlined text-on-primary text-[20px]"
-                                style="font-variation-settings: 'FILL' 1;">eco</span>
-                        </div>
-                        <span class="font-title-lg text-title-lg text-primary font-bold">SIDJ-Kluwih</span>
+                    <div class="md:hidden flex items-center mb-md">
+                        <img class="h-10 w-auto object-contain" src="{{ asset('logo.png') }}" alt="Logo SIJALU-Kluwih">
                     </div>
                     <div class="text-center md:text-left space-y-xs">
                         <h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Selamat Datang
@@ -311,7 +303,7 @@
                 <!-- Footer -->
                 <footer class="pt-xl text-center md:text-left">
                     <p class="font-label-sm text-label-sm text-on-surface-variant">
-                        © 2024 SIDJ-Kluwih. Seluruh Hak Cipta Dilindungi.
+                        © 2024 SIJALU-Kluwih. Seluruh Hak Cipta Dilindungi.
                         <br class="md:hidden" />
                         <a class="ml-xs md:ml-sm text-primary font-bold hover:underline" href="forgot-password">Butuh
                             Bantuan?</a>

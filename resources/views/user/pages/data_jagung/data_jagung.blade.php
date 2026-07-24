@@ -1,6 +1,6 @@
 @extends('user.layout.master')
 
-@section('title', 'Pusat Data Jagung - SIDJ-Kluwih')
+@section('title', 'Pusat Data Jagung - SIJALU-Kluwih')
 
 @section('content')
     {{-- Hero Section --}}
@@ -15,7 +15,7 @@
                 <div>
                     <h1 class="text-4xl lg:text-5xl font-bold text-primary leading-tight mb-4">Pusat Data Jagung Kolektif</h1>
                     <p class="text-lg text-on-surface-variant max-w-xl">
-                        Pantau transparansi hasil panen wilayah secara publik. Data diperbarui secara berkala dan dianonymisasi untuk menjaga privasi petani.
+                        Pantau transparansi hasil panen wilayah secara publik. Data diperbarui secara berkala secara transparan.
                     </p>
                 </div>
                 {{-- Search Bar --}}
@@ -148,14 +148,14 @@
         <div class="bg-surface rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
             <div class="p-5 border-b border-outline-variant flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                 <h3 class="text-base font-bold text-on-surface">Riwayat Setoran (Publik)</h3>
-                <p class="text-xs text-on-surface-variant italic">Data dianonymisasi untuk privasi petani</p>
+                <p class="text-xs text-on-surface-variant italic">Data riwayat setoran petani secara transparan</p>
             </div>
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-surface-container">
                         <tr>
                             <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold">Tanggal Setor</th>
-                            <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold">Petani (Anonym)</th>
+                            <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold">Nama Petani</th>
                             <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold">Batch Pengeringan</th>
                             <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold">Jenis</th>
                             <th class="px-6 py-3 text-xs text-on-surface-variant uppercase tracking-wide font-semibold text-right">Berat (Kg)</th>
@@ -167,15 +167,12 @@
                         @php
                             $session = \App\Models\DryingSession::where('farmer_name', $trx->farmer_name)->latest()->first();
                             $batchName = $session ? $session->batch_name : 'Batch Main Dryer';
-                            
                             $name = $trx->farmer_name;
-                            $parts = explode(' ', $name);
-                            $masked = collect($parts)->map(fn($p) => substr($p,0,1) . str_repeat('*', max(1,strlen($p)-1)))->join(' ');
                         @endphp
-                        <tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="openDetailModal('{{ $trx->id }}', '{{ addslashes($masked) }}', '{{ \Carbon\Carbon::parse($trx->tanggal_selesai ?? $trx->created_at)->format('d M Y') }}', '{{ addslashes($batchName) }}', '{{ addslashes($trx->jenis_laporan ?? $trx->kategori ?? 'Jagung') }}', '{{ number_format($trx->tonnage, 0, ',', '.') }}', '{{ addslashes($trx->keterangan ?? '-') }}')">
+                        <tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="openDetailModal('{{ $trx->id }}', '{{ addslashes($name) }}', '{{ \Carbon\Carbon::parse($trx->tanggal_selesai ?? $trx->created_at)->format('d M Y') }}', '{{ addslashes($batchName) }}', '{{ addslashes($trx->jenis_laporan ?? $trx->kategori ?? 'Jagung') }}', '{{ number_format($trx->tonnage, 0, ',', '.') }}', '{{ addslashes($trx->keterangan ?? '-') }}')">
                             <td class="px-6 py-4 text-sm text-on-surface">{{ \Carbon\Carbon::parse($trx->tanggal_selesai ?? $trx->created_at)->format('d M Y') }}</td>
                             <td class="px-6 py-4 text-sm text-on-surface">
-                                {{ $masked }}
+                                {{ $name }}
                             </td>
                             <td class="px-6 py-4 text-sm text-on-surface-variant">{{ $batchName }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-primary">{{ $trx->jenis_laporan ?? $trx->kategori ?? 'Jagung' }}</td>
@@ -241,7 +238,7 @@
             <div class="space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div class="p-3 bg-surface-container rounded-xl border border-outline-variant/30">
-                        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Petani (Anonym)</p>
+                        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Nama Petani</p>
                         <p class="text-sm font-extrabold text-on-surface mt-1" id="mFarmerName">-</p>
                     </div>
                     <div class="p-3 bg-surface-container rounded-xl border border-outline-variant/30">

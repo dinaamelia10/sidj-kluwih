@@ -44,11 +44,11 @@ class DryingSession extends Model
     public function getElapsedSecondsAttribute(): int
     {
         if ($this->status === 'Berjalan') {
-            return max(0, (int) Carbon::now()->diffInSeconds($this->start_time));
+            return max(0, (int) Carbon::now()->diffInSeconds($this->start_time, true));
         }
 
         if ($this->end_time) {
-            return max(0, (int) $this->end_time->diffInSeconds($this->start_time));
+            return max(0, (int) $this->end_time->diffInSeconds($this->start_time, true));
         }
 
         return ($this->actual_duration_minutes ?? 0) * 60;
@@ -140,7 +140,7 @@ class DryingSession extends Model
             return false;
         }
 
-        $actualMinutes = (int) round(now()->diffInMinutes($this->start_time));
+        $actualMinutes = (int) round(now()->diffInMinutes($this->start_time, true));
         $this->update([
             'status' => 'Selesai',
             'end_time' => now(),
@@ -159,7 +159,7 @@ class DryingSession extends Model
                     'tonase' => '-',
                 ]);
             } else {
-                $pesan = "✅ *PROSES PENGERINGAN SELESAI* ✅\n\nWaktu pengeringan untuk *{$this->batch_name}* ({$this->farmer_name}) selama *{$this->formatted_target_hours}* telah habis!\n\n_Silakan matikan kompor dan periksa hasil pengeringan._\n\n_SIDJ Kluwih - CV Fian Putra_";
+                $pesan = "✅ *PROSES PENGERINGAN SELESAI* ✅\n\nWaktu pengeringan untuk *{$this->batch_name}* ({$this->farmer_name}) selama *{$this->formatted_target_hours}* telah habis!\n\n_Silakan matikan kompor dan periksa hasil pengeringan._\n\n_SIJALU-Kluwih_";
             }
 
             WhatsAppService::sendToAdmins($pesan);

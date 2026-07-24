@@ -94,9 +94,11 @@
                 @php
                     $heightPercent = max(5, round(($volume / $maxWeeklyVolume) * 100));
                 @endphp
-                <div class="flex-1 min-w-[56px] flex flex-col items-center gap-3" data-value="{{ number_format($volume, 1) }}">
-                    <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300" style="height: {{ $heightPercent }}%"></div>
-                    <p class="text-label-sm text-label-sm opacity-60">{{ $daysLabels[$index] }}</p>
+                <div class="flex-1 min-w-[56px] h-full flex flex-col justify-end items-center gap-2" data-value="{{ number_format($volume, 1) }}">
+                    <div class="w-full flex-1 flex items-end">
+                        <div class="chart-bar w-full rounded-t-lg bg-secondary-container/40 transition-all duration-300 animate-fade-in" style="height: {{ $heightPercent }}%"></div>
+                    </div>
+                    <p class="text-label-sm opacity-60 text-center">{{ $daysLabels[$index] }}</p>
                 </div>
                 @endforeach
             </div>

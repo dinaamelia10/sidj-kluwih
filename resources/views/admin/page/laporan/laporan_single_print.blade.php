@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bukti Laporan Transaksi #{{ $transaction->id }} — SIDJ-Kluwih</title>
+    <title>Bukti Laporan Transaksi #{{ $transaction->id }} — SIJALU-Kluwih</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #1a1a1a; background: white; }
@@ -46,7 +46,7 @@
     <div class="document">
         <div class="header">
             <div class="brand">
-                <h1>🌽 SIDJ-Kluwih</h1>
+                <h1>🌽 SIJALU-Kluwih</h1>
                 <p>Sistem Informasi Dryer Jagung — Desa Kluwih, Kec. Bandar, Kab. Batang, Jawa Tengah</p>
             </div>
             <div class="doc-title">
@@ -114,12 +114,12 @@
             </div>
             <div>
                 <p style="margin-bottom:60px;color:#555;">Petugas Operasional Dryer</p>
-                <div class="sign-box">( Admin SIDJ-Kluwih )</div>
+                <div class="sign-box">( Admin SIJALU-Kluwih )</div>
             </div>
         </div>
 
         <div class="footer-note">
-            <span>Dokumen ini diterbitkan secara resmi oleh Sistem Informasi Dryer Jagung (SIDJ-Kluwih).</span>
+            <span>Dokumen ini diterbitkan secara resmi oleh Sistem Informasi Dryer Jagung (SIJALU-Kluwih).</span>
             <span>Dicetak: {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }} WIB</span>
         </div>
     </div>

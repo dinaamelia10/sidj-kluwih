@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Transaksi — SIDJ-Kluwih</title>
+    <title>Laporan Transaksi — SIJALU-Kluwih</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #1a1a1a; background: white; }
@@ -39,13 +39,13 @@
 </head>
 <body>
     <div class="no-print" style="background:#1b5e20;color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-weight:bold;">Preview PDF — SIDJ-Kluwih</span>
+        <span style="font-weight:bold;">Preview PDF — SIJALU-Kluwih</span>
         <button onclick="window.print()" style="background:white;color:#1b5e20;border:none;padding:8px 20px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ Cetak / Simpan PDF</button>
     </div>
 
     <div class="header">
         <div>
-            <h1>🌽 SIDJ-Kluwih</h1>
+            <h1>🌽 SIJALU-Kluwih</h1>
             <p>Sistem Informasi Dryer Jagung — Desa Kluwih, Kec. Bandar, Kab. Batang, Jawa Tengah</p>
         </div>
         <div class="header-right">
@@ -118,7 +118,7 @@
         {{-- Footer --}}
         <div class="footer">
             <div class="footer-left">
-                Dokumen ini digenerate otomatis oleh Sistem Informasi Dryer Jagung Kluwih (SIDJ-Kluwih)<br>
+                Dokumen ini digenerate otomatis oleh Sistem Informasi Dryer Jagung Kluwih (SIJALU-Kluwih)<br>
                 {{ url('/admin/laporan') }}
             </div>
             <div class="footer-right">

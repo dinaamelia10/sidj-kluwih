@@ -43,6 +43,9 @@
                     <button type="button" onclick="markAllNotifsAsRead()" class="text-xs font-bold text-primary hover:underline">Tandai Semua Dibaca</button>
                 </div>
                 <div class="max-h-80 overflow-y-auto no-scrollbar divide-y divide-outline-variant/10" id="notif-list-container">
+                    <div id="notif-empty-placeholder" class="p-6 text-center text-on-surface-variant text-xs italic hidden">
+                        Tidak ada notifikasi baru.
+                    </div>
                     @forelse($notificationsList ?? [] as $notif)
                     <a href="{{ $notif->link }}"
                        data-notif-id="{{ $notif->id }}"
@@ -115,13 +118,13 @@
 <script>
     function getReadNotifs() {
         try {
-            return JSON.parse(localStorage.getItem('sidj_read_notifs') || '[]');
+            return JSON.parse(localStorage.getItem('sijalu_read_notifs') || '[]');
         } catch(e) { return []; }
     }
 
     function saveReadNotifs(list) {
         try {
-            localStorage.setItem('sidj_read_notifs', JSON.stringify(list));
+            localStorage.setItem('sijalu_read_notifs', JSON.stringify(list));
         } catch(e) {}
     }
 
@@ -134,20 +137,23 @@
             const id = item.getAttribute('data-notif-id');
             const dot = item.querySelector('.notif-dot');
             if (id && readList.includes(id)) {
-                // Read state: pure white background
-                item.className = "notif-item p-4 transition-colors cursor-pointer flex gap-3 block bg-white hover:bg-surface-container-low border-l-4 border-l-transparent opacity-80";
-                if (dot) dot.style.display = 'none';
+                // Hide read notifications entirely
+                item.style.setProperty('display', 'none', 'important');
             } else {
-                // Unread state: subtle gray background with accent border & dot
-                item.className = "notif-item p-4 transition-colors cursor-pointer flex gap-3 block bg-slate-100/90 hover:bg-slate-200/90 border-l-4 border-l-primary font-medium";
-                if (dot) dot.style.display = 'inline-block';
+                // Show unread
+                item.style.setProperty('display', 'flex', 'important');
                 unreadCount++;
             }
         });
 
+        const placeholder = document.getElementById('notif-empty-placeholder');
+        if (placeholder) {
+            placeholder.style.setProperty('display', unreadCount === 0 ? 'block' : 'none', 'important');
+        }
+
         const headerPulseDot = document.querySelector('#btn-notif .bg-error');
         if (headerPulseDot) {
-            headerPulseDot.style.display = unreadCount > 0 ? 'block' : 'none';
+            headerPulseDot.style.setProperty('display', unreadCount > 0 ? 'block' : 'none', 'important');
         }
     }
 

@@ -11,16 +11,8 @@
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant px-4 sm:px-6 lg:px-16 py-3 flex items-center justify-between gap-4">
     {{-- Logo --}}
-    <a href="{{ route('user.beranda') }}" class="flex items-center gap-3 text-primary flex-shrink-0">
-        <div class="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-container text-on-primary">
-            <svg class="w-5 h-5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path clip-rule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fill-rule="evenodd"></path>
-            </svg>
-        </div>
-        <div>
-            <h2 class="text-base font-bold tracking-tight leading-none">SIDJ-Kluwih</h2>
-            <p class="text-[11px] text-on-surface-variant hidden sm:block leading-none mt-0.5">Agri-Tech Platform</p>
-        </div>
+    <a href="{{ route('user.beranda') }}" class="flex items-center flex-shrink-0">
+        <img class="h-11 w-auto object-contain" src="{{ asset('logo.png') }}" alt="Logo SIJALU-Kluwih">
     </a>
 
     {{-- Desktop Nav --}}
@@ -55,7 +47,7 @@
 {{-- Mobile Drawer --}}
 <nav id="user-mobile-nav" class="fixed top-0 left-0 bottom-0 w-64 bg-surface border-r border-outline-variant shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col pt-6">
     <div class="px-5 pb-5 flex items-center justify-between border-b border-outline-variant/30">
-        <span class="text-base font-bold text-primary">SIDJ-Kluwih</span>
+        <img class="h-10 w-auto object-contain" src="{{ asset('logo.png') }}" alt="Logo SIJALU-Kluwih">
         <button id="user-mobile-close" class="p-1 hover:bg-surface-container rounded-full text-on-surface-variant" aria-label="Tutup menu">
             <span class="material-symbols-outlined">close</span>
         </button>

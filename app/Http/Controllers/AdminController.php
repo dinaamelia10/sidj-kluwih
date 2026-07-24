@@ -21,18 +21,9 @@ class AdminController extends Controller
     public function index()
     {
         // 1. Ambil data sensor IoT terbaru
+        $currentTemperature = $this->getLatestTemperature(0.0);
         $latestData = DryingMonitor::latest()->first();
-        $currentTemperature = $latestData ? $latestData->temperature : 0.0;
         $currentMoisture = $latestData ? $latestData->moisture : 0.0;
-
-        // Logika Batas Pemicu Notifikasi Pembalikan Jagung
-        $showNotification = false;
-        $notificationMessage = "";
-        if ($activeSession && $currentTemperature >= 45.0) {
-            $showNotification = true;
-            $notificationMessage = "Peringatan: Proses pengeringan sedang berjalan (Suhu Kompor: {$currentTemperature}°C). Segera lakukan pembalikan jagung agar panas merata!";
-        }
-
 
         // 3. Ambil Sesi Pengeringan Aktif (Timer & Riwayat)
         $activeSession = DryingSession::where('status', 'Berjalan')->latest()->first();
@@ -45,6 +36,14 @@ class AdminController extends Controller
 
         $activeFarmerName = $activeSession ? $activeSession->farmer_name : 'Tidak Ada Antrean Sesi';
         $sessionHistory = DryingSession::latest()->take(5)->get();
+
+        // Logika Batas Pemicu Notifikasi Pembalikan Jagung
+        $showNotification = false;
+        $notificationMessage = "";
+        if ($activeSession && $currentTemperature >= 45.0) {
+            $showNotification = true;
+            $notificationMessage = "Peringatan: Proses pengeringan sedang berjalan (Suhu Kompor: {$currentTemperature}°C). Segera lakukan pembalikan jagung agar panas merata!";
+        }
 
         // 4. Data Harga Pasar Terakhir
         $latestPriceObj = MarketPrice::latest()->first();
@@ -80,7 +79,7 @@ class AdminController extends Controller
             
             if ($chartSession->status !== 'Berjalan' && $chartSession->end_time) {
                 $sessEnd = $chartSession->end_time->copy();
-                $diffMins = max(30, $sessStart->diffInMinutes($sessEnd));
+                $diffMins = max(30, $sessStart->diffInMinutes($sessEnd, true));
                 $steps = max(2, (int) ceil($diffMins / 30) + 1);
                 $isSessionActive = false;
             } else {
@@ -175,8 +174,8 @@ class AdminController extends Controller
     public function pemantauan()
     {
         // 1. Ambil data IoT terbaru dari database
+        $currentTemperature = $this->getLatestTemperature(30.0);
         $latestData = DryingMonitor::latest()->first();
-        $currentTemperature = $latestData ? $latestData->temperature : 30.0;
         $currentMoisture = $latestData ? $latestData->moisture : 14.0;
         $targetMoistureSetting = (float) Setting::getVal('kadar_air_target', 15);
         $targetTempSetting = (float) Setting::getVal('suhu_target', 82);
@@ -231,7 +230,7 @@ class AdminController extends Controller
 
             if ($chartSession->status !== 'Berjalan' && $chartSession->end_time) {
                 $sessEnd = $chartSession->end_time->copy();
-                $diffMins = max(30, $sessStart->diffInMinutes($sessEnd));
+                $diffMins = max(30, $sessStart->diffInMinutes($sessEnd, true));
                 $steps = max(2, (int) ceil($diffMins / 30) + 1);
                 $isSessionActive = false;
             } else {
@@ -352,7 +351,7 @@ class AdminController extends Controller
             $oldSession->update([
                 'status' => 'Dibatalkan',
                 'end_time' => now(),
-                'actual_duration_minutes' => (int) round(now()->diffInMinutes($oldSession->start_time))
+                'actual_duration_minutes' => (int) round(now()->diffInMinutes($oldSession->start_time, true))
             ]);
         }
 
@@ -474,7 +473,7 @@ class AdminController extends Controller
 
         // Tonase Tahun Ini
         $tonnageThisYear = \App\Models\Transaction::whereYear('created_at', \Carbon\Carbon::now()->year)->sum('tonnage');
-        $yearlyTarget = 1500; // Target default sistem pengeringan
+        $yearlyTarget = (float) Setting::getVal('target_tonase_tahunan', 1500); // Target default sistem pengeringan
 
         // 2. DATA GRAFIK BATANG MINGGUAN (Senin - Minggu)
         $startOfWeek = \Carbon\Carbon::now()->startOfWeek();
@@ -740,7 +739,7 @@ class AdminController extends Controller
             ? round((($thisWeekTonase - $lastWeekTonase) / $lastWeekTonase) * 100, 1)
             : 0;
 
-        $monthlyTarget   = 500;
+        $monthlyTarget   = (float) Setting::getVal('target_tonase_bulanan', 500);
         $monthlyProgress = min(100, $monthlyTarget > 0 ? round(($totalTonase / $monthlyTarget) * 100) : 0);
 
         // ── 4. TABEL RIWAYAT ─────────────────────────────────────────────────
@@ -771,7 +770,7 @@ class AdminController extends Controller
             'totalTonaseFormatted', 'tonaseLastMonthFormatted',
             'avgPriceFormatted', 'priceTrend',
             'monthLabels', 'monthlyTonase', 'maxMonthlyTonase', 'svgPoints',
-            'weeklyGrowth', 'monthlyProgress', 'laporan',
+            'weeklyGrowth', 'monthlyProgress', 'monthlyTarget', 'laporan',
             'previewTonase', 'priceFluktuasi', 'progressSelesai', 'petaniList'
         ));
     }
@@ -1187,5 +1186,34 @@ class AdminController extends Controller
             'prices'       => $prices,
             'messages'     => $messages
         ]);
+    }
+
+    /**
+     * Ambil suhu terbaru secara real-time dari Firebase REST API
+     * atau fallback ke database lokal jika offline.
+     */
+    private function getLatestTemperature($fallback = 30.0)
+    {
+        try {
+            $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                ->timeout(1.5)
+                ->get('https://dryerjagung-63ad6-default-rtdb.asia-southeast1.firebasedatabase.app/Suhu_Mesin/Atas.json');
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (is_array($data) && count($data) > 0) {
+                    return (float) end($data);
+                }
+            }
+        } catch (\Exception $e) {
+            // Abaikan jika terjadi kesalahan jaringan
+        }
+
+        $latestLocal = DryingMonitor::latest()->first();
+        if ($latestLocal) {
+            return (float) $latestLocal->temperature;
+        }
+
+        return $fallback;
     }
 }

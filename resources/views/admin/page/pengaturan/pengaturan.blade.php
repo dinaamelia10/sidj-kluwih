@@ -79,7 +79,7 @@
                 </nav>
                 <h1 class="font-headline-lg text-headline-lg font-extrabold text-on-surface">Pengaturan Sistem & Pengeringan</h1>
                 <p class="text-on-surface-variant font-body-md text-body-md mt-2">
-                    Sesuaikan parameter mesin pengering sekam CV Fian Putra, notifikasi WhatsApp, dan aturan suhu/kadar air.
+                    Sesuaikan parameter mesin pengering sekam, notifikasi WhatsApp, dan aturan suhu/kadar air.
                 </p>
             </div>
             <button type="submit"
@@ -201,7 +201,7 @@
             {{-- ========== KOLOM KANAN (Parameter & Aturan) ========== --}}
             <div class="space-y-lg">
                 
-                {{-- 3. Parameter Pengeringan (CV Fian Putra) --}}
+                {{-- 3. Parameter Pengeringan --}}
                 <div class="glass-card custom-shadow rounded-3xl p-lg">
                     <div class="mb-6">
                         <h2 class="font-title-lg text-title-lg font-bold">Parameter Mesin Pengering</h2>
@@ -301,6 +301,36 @@
                                         <span class="text-sm font-bold text-on-surface-variant">%</span>
                                     </div>
                                     <p class="text-[10px] text-error mt-2">Jagung di atas nilai ini terlalu basah, butuh pra-pengeringan manual dulu.</p>
+                                </div>
+                        </div>
+
+                        {{-- Target Tonase --}}
+                        <div class="sm:col-span-2 p-4 bg-surface-container-lowest border border-outline-variant/50 rounded-2xl">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="material-symbols-outlined text-primary">scale</span>
+                                <h3 class="font-bold text-sm">Target Tonase Pengeringan</h3>
+                            </div>
+                            <p class="text-xs text-on-surface-variant mb-4">Tentukan target volume tonase jagung yang ingin dicapai untuk skala bulanan dan tahunan.</p>
+
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                {{-- Bulanan --}}
+                                <div class="p-3 border border-outline-variant/30 rounded-xl bg-white">
+                                    <label class="text-[10px] uppercase font-bold text-on-surface-variant">Target Bulanan (Laporan)</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <input type="number" name="target_tonase_bulanan" value="{{ $settings['target_tonase_bulanan'] ?? '500' }}" 
+                                            class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm outline-none focus:border-primary">
+                                        <span class="text-sm font-bold text-on-surface-variant">Kg</span>
+                                    </div>
+                                </div>
+
+                                {{-- Tahunan --}}
+                                <div class="p-3 border border-outline-variant/30 rounded-xl bg-white">
+                                    <label class="text-[10px] uppercase font-bold text-on-surface-variant">Target Tahunan (Timbangan)</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <input type="number" name="target_tonase_tahunan" value="{{ $settings['target_tonase_tahunan'] ?? '1500' }}" 
+                                            class="w-full rounded-lg border border-outline-variant px-3 py-2 text-sm outline-none focus:border-primary">
+                                        <span class="text-sm font-bold text-on-surface-variant">Kg</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

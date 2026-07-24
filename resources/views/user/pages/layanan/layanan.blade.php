@@ -1,6 +1,6 @@
 @extends('user.layout.master')
 
-@section('title', 'Layanan - SIDJ-Kluwih')
+@section('title', 'Layanan - SIJALU-Kluwih')
 
 @section('content')
     {{-- Hero Section --}}
@@ -63,16 +63,35 @@
             <div class="lg:col-span-7 soft-card p-5">
                 <div class="flex justify-between items-center mb-5">
                     <h3 class="font-bold text-lg text-on-surface">Dashboard Smart Dryer</h3>
-                    <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold animate-pulse">AKTIF</span>
+                    <span id="session-status-badge" class="{{ $activeSession ? 'bg-secondary-container text-on-secondary-container animate-pulse' : 'bg-surface-container-high text-on-surface-variant' }} px-3 py-1 rounded-full text-xs font-bold">
+                        {{ $activeSession ? 'AKTIF' : 'STANDBY' }}
+                    </span>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-                    @foreach([['label'=>'Suhu','val'=>'80°C','icon'=>'thermostat'],['label'=>'Kelembaban','val'=>'14.2%','icon'=>'water_drop'],['label'=>'Durasi','val'=>'02:45','icon'=>'timer'],['label'=>'Beban','val'=>'4.2 T','icon'=>'scale']] as $m)
+                    <!-- Suhu Card -->
                     <div class="p-3 bg-surface-container rounded-xl text-center">
-                        <span class="material-symbols-outlined text-primary text-lg">{{ $m['icon'] }}</span>
-                        <p class="text-xs text-on-surface-variant mt-1">{{ $m['label'] }}</p>
-                        <p class="text-xl font-bold text-primary">{{ $m['val'] }}</p>
+                        <span class="material-symbols-outlined text-primary text-lg">thermostat</span>
+                        <p class="text-xs text-on-surface-variant mt-1">Suhu</p>
+                        <p class="text-xl font-bold text-primary" id="visitor-temp">{{ number_format($currentTemperature, 1) }}°C</p>
                     </div>
-                    @endforeach
+                    <!-- Kelembaban Card -->
+                    <div class="p-3 bg-surface-container rounded-xl text-center">
+                        <span class="material-symbols-outlined text-primary text-lg">water_drop</span>
+                        <p class="text-xs text-on-surface-variant mt-1">Kelembaban</p>
+                        <p class="text-xl font-bold text-primary" id="visitor-moisture">{{ $activeSession ? number_format($currentMoisture, 1) . '%' : 'Standby' }}</p>
+                    </div>
+                    <!-- Durasi Card -->
+                    <div class="p-3 bg-surface-container rounded-xl text-center">
+                        <span class="material-symbols-outlined text-primary text-lg">timer</span>
+                        <p class="text-xs text-on-surface-variant mt-1">Durasi</p>
+                        <p class="text-xl font-bold text-primary" id="visitor-timer">{{ $activeSession ? $timerString : 'Standby' }}</p>
+                    </div>
+                    <!-- Beban Card -->
+                    <div class="p-3 bg-surface-container rounded-xl text-center">
+                        <span class="material-symbols-outlined text-primary text-lg">scale</span>
+                        <p class="text-xs text-on-surface-variant mt-1">Beban</p>
+                        <p class="text-xl font-bold text-primary" id="visitor-tonnage">{{ $activeSession && $activeTonnage > 0 ? number_format($activeTonnage / 1000, 1) . ' T' : 'Standby' }}</p>
+                    </div>
                 </div>
                 <div class="h-40 w-full bg-surface-container flex items-end gap-1 p-2 rounded-xl overflow-hidden border border-outline-variant">
                     @foreach([40,55,50,70,85,90,95,80,60,45] as $h)
@@ -260,11 +279,38 @@
 @endsection
 
 @push('scripts')
+<!-- MQTT.js library -->
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 <script>
-    document.querySelectorAll('details').forEach((el) => {
-        el.addEventListener('click', () => {
-            document.querySelectorAll('details').forEach((other) => {
-                if (other !== el) other.removeAttribute('open');
+    document.addEventListener('DOMContentLoaded', function () {
+        const brokerUrl = 'wss://test.mosquitto.org:8081/mqtt';
+        const topicSuhu = 'pabrik/mesin/suhu_atas';
+        const client = mqtt.connect(brokerUrl);
+
+        const tempEl = document.getElementById('visitor-temp');
+
+        client.on('connect', function () {
+            console.log('MQTT Visitor Services Connected!');
+            client.subscribe(topicSuhu);
+        });
+
+        client.on('message', function (topic, message) {
+            if (topic === topicSuhu) {
+                const val = parseFloat(message.toString());
+                if (!isNaN(val)) {
+                    if (tempEl) {
+                        tempEl.innerText = val.toFixed(1) + '°C';
+                    }
+                }
+            }
+        });
+
+        // FAQ details collapse group logic
+        document.querySelectorAll('details').forEach((el) => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('details').forEach((other) => {
+                    if (other !== el) other.removeAttribute('open');
+                });
             });
         });
     });

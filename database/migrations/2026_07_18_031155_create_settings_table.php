@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Seed default settings CV Fian Putra
+        // Seed default settings
         $defaults = [
             // === WhatsApp API ===
             ['key' => 'wa_api_token',       'value' => '',              'group' => 'wa_api',      'label' => 'API Token Fonnte'],
@@ -31,7 +31,7 @@ return new class extends Migration
             ['key' => 'supervisor_wa_number','value' => '',             'group' => 'penerima',    'label' => 'Nomor WA Supervisor'],
             ['key' => 'supervisor_wa_name', 'value' => 'Supervisor',    'group' => 'penerima',    'label' => 'Nama Supervisor'],
 
-            // === Parameter Pengeringan (sesuai CV Fian Putra) ===
+            // === Parameter Pengeringan ===
             ['key' => 'suhu_target',        'value' => '82',            'group' => 'pengeringan', 'label' => 'Suhu Operasional Target (°C)'],
             ['key' => 'suhu_max',           'value' => '60',            'group' => 'pengeringan', 'label' => 'Suhu Maksimum (°C)'],
             ['key' => 'kadar_air_target',   'value' => '15',            'group' => 'pengeringan', 'label' => 'Target Kadar Air Standar (%)'],
@@ -41,6 +41,8 @@ return new class extends Migration
             ['key' => 'grup_a_max',         'value' => '25',            'group' => 'pengeringan', 'label' => 'Kelompok A - Kadar Air Max (%)'],
             ['key' => 'grup_b_min',         'value' => '25',            'group' => 'pengeringan', 'label' => 'Kelompok B - Kadar Air Min (%)'],
             ['key' => 'grup_b_max',         'value' => '38',            'group' => 'pengeringan', 'label' => 'Kelompok B - Kadar Air Max (%)'],
+            ['key' => 'target_tonase_bulanan', 'value' => '500',         'group' => 'pengeringan', 'label' => 'Target Tonase Bulanan (Kg)'],
+            ['key' => 'target_tonase_tahunan', 'value' => '1500',        'group' => 'pengeringan', 'label' => 'Target Tonase Tahunan (Kg)'],
 
             // === Aturan Notifikasi ===
             ['key' => 'notif_balik',        'value' => '1',             'group' => 'notifikasi',  'label' => 'Notifikasi Jagung Perlu Dibalik'],
@@ -50,9 +52,9 @@ return new class extends Migration
             ['key' => 'notif_kirim_ke_petani', 'value' => '0',          'group' => 'notifikasi',  'label' => 'Kirim Notifikasi ke Petani'],
 
             // === Template Pesan ===
-            ['key' => 'template_balik',     'value' => "🌽 *JAGUNG PERLU DIBALIK* 🌽\n\nHalo {nama_petani},\n\nJagung milik Anda (Batch {batch_id}) sudah {durasi} jam dalam proses pengeringan.\nKadar air saat ini: *{kadar_air}%*\nSuhu pengering: *{suhu}°C*\n\nMohon segera lakukan pembalikan agar pengeringan merata.\n\n_CV Fian Putra - SIDJ Kluwih_", 'group' => 'template', 'label' => 'Template: Jagung Perlu Dibalik'],
-            ['key' => 'template_selesai',   'value' => "✅ *PENGERINGAN SELESAI* ✅\n\nHalo {nama_petani},\n\nProses pengeringan jagung Anda (Batch {batch_id}) telah selesai!\nKadar air akhir: *{kadar_air}%* (standar 15%)\nTotal tonase: *{tonase} Kg*\nDurasi: *{durasi} Jam*\n\nJagung siap diambil. Terima kasih! 🤝\n\n_CV Fian Putra - SIDJ Kluwih_", 'group' => 'template', 'label' => 'Template: Pengeringan Selesai'],
-            ['key' => 'template_jamur',     'value' => "⚠️ *PERINGATAN RISIKO JAMUR* ⚠️\n\nKadar air jagung pada Batch {batch_id} terdeteksi *{kadar_air}%*.\n\nKadar air ≤17% memiliki potensi jamur lebih tinggi. Segera proses pengeringan lanjutan hingga mencapai 15%.\n\nWaktu deteksi: {waktu}\n\n_SIDJ Kluwih - CV Fian Putra_", 'group' => 'template', 'label' => 'Template: Risiko Jamur'],
+            ['key' => 'template_balik',     'value' => "🌽 *JAGUNG PERLU DIBALIK* 🌽\n\nHalo {nama_petani},\n\nJagung milik Anda (Batch {batch_id}) sudah {durasi} jam dalam proses pengeringan.\nKadar air saat ini: *{kadar_air}%*\nSuhu pengering: *{suhu}°C*\n\nMohon segera lakukan pembalikan agar pengeringan merata.\n\n_SIJALU-Kluwih_", 'group' => 'template', 'label' => 'Template: Jagung Perlu Dibalik'],
+            ['key' => 'template_selesai',   'value' => "✅ *PENGERINGAN SELESAI* ✅\n\nHalo {nama_petani},\n\nProses pengeringan jagung Anda (Batch {batch_id}) telah selesai!\nKadar air akhir: *{kadar_air}%* (standar 15%)\nTotal tonase: *{tonase} Kg*\nDurasi: *{durasi} Jam*\n\nJagung siap diambil. Terima kasih! 🤝\n\n_SIJALU-Kluwih_", 'group' => 'template', 'label' => 'Template: Pengeringan Selesai'],
+            ['key' => 'template_jamur',     'value' => "⚠️ *PERINGATAN RISIKO JAMUR* ⚠️\n\nKadar air jagung pada Batch {batch_id} terdeteksi *{kadar_air}%*.\n\nKadar air ≤17% memiliki potensi jamur lebih tinggi. Segera proses pengeringan lanjutan hingga mencapai 15%.\n\nWaktu deteksi: {waktu}\n\n_SIJALU-Kluwih_", 'group' => 'template', 'label' => 'Template: Risiko Jamur'],
         ];
 
         foreach ($defaults as $row) {

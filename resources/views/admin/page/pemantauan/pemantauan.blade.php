@@ -20,17 +20,17 @@
                     </div>
                     <p class="text-on-surface-variant font-body-md text-body-md mt-2">Pantau kinerja kompor, timer jam pengeringan, dan riwayat operasional alat secara real-time.</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-sm">
-                    <button type="button" onclick="openStartDryingModal()" class="inline-flex items-center gap-sm rounded-2xl bg-primary px-lg py-3 text-white font-black transition hover:bg-primary/90 shadow-md active:scale-95 cursor-pointer">
-                        <span class="material-symbols-outlined">timer</span>
-                        🚀 Start Jam Pengeringan
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 whitespace-nowrap w-full sm:w-auto">
+                    <button type="button" onclick="openStartDryingModal()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-white font-bold text-xs sm:text-sm transition hover:bg-primary/90 shadow-md active:scale-95 cursor-pointer">
+                        <span class="material-symbols-outlined text-base">timer</span>
+                        Start Jam Pengeringan
                     </button>
-                    <button type="button" onclick="window.print()" class="inline-flex items-center gap-sm rounded-2xl bg-surface-container-lowest px-lg py-3 text-on-surface font-bold transition border border-outline-variant hover:bg-surface-container-low shadow-sm active:scale-95">
-                        <span class="material-symbols-outlined">print</span>
+                    <button type="button" onclick="window.print()" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-surface-container-lowest px-4 py-2.5 text-on-surface font-bold text-xs sm:text-sm transition border border-outline-variant hover:bg-surface-container-low shadow-sm active:scale-95">
+                        <span class="material-symbols-outlined text-base">print</span>
                         Cetak Grafik
                     </button>
-                    <a href="{{ route('admin.pemantauan.export') }}" class="inline-flex items-center gap-sm rounded-2xl bg-primary-container px-lg py-3 text-on-primary-container font-bold transition hover:bg-primary active:scale-95 shadow-md">
-                        <span class="material-symbols-outlined">download</span>
+                    <a href="{{ route('admin.pemantauan.export') }}" class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl bg-primary-container px-4 py-2.5 text-on-primary-container font-bold text-xs sm:text-sm transition hover:bg-primary hover:text-white active:scale-95 shadow-md">
+                        <span class="material-symbols-outlined text-base">download</span>
                         Export Data CSV
                     </a>
                 </div>
@@ -71,7 +71,7 @@
                             <div class="text-[8px] text-on-surface-variant uppercase tracking-wider font-bold">CELSIUS</div>
                         </div>
                     </div>
-                    <div class="flex justify-between px-6 text-[10px] font-bold text-on-surface-variant mt-[-10px] mb-4">
+                    <div class="w-full max-w-[160px] mx-auto flex justify-between px-2 text-[10px] font-bold text-on-surface-variant mt-[-10px] mb-4">
                         <span>0</span>
                         <span>70</span>
                     </div>
@@ -87,7 +87,7 @@
 
                 <!-- Durasi & Progres Pengeringan -->
                 <div
-                    class="bg-surface-container-lowest p-lg rounded-[20px] border border-outline-variant shadow-sm relative overflow-hidden group">
+                    class="bg-surface-container-lowest p-lg rounded-[20px] border border-outline-variant shadow-sm relative overflow-hidden group flex flex-col justify-between">
                     <div class="flex justify-between items-start mb-md">
                         <div class="space-y-1">
                             <p class="text-on-surface-variant font-label-md">Timer Pengeringan</p>
@@ -98,15 +98,17 @@
                             <span class="material-symbols-outlined" data-icon="schedule">schedule</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-sm">
-                        <div class="flex-1 bg-surface-container-high h-2 rounded-full overflow-hidden">
-                            <div class="bg-primary h-full" style="width: {{ $progressPercent }}%; transition: width 1s ease-in-out;"></div>
+                    <div class="space-y-3 mt-4">
+                        <div class="flex items-center gap-sm">
+                            <div class="flex-1 bg-surface-container-high h-2 rounded-full overflow-hidden">
+                                <div class="bg-primary h-full" style="width: {{ $progressPercent }}%; transition: width 1s ease-in-out;"></div>
+                            </div>
+                            <span class="font-label-md text-on-surface-variant">{{ $progressPercent }}%</span>
                         </div>
-                        <span class="font-label-md text-on-surface-variant">{{ $progressPercent }}%</span>
-                    </div>
-                    <div class="flex justify-between mt-2 text-[11px] text-on-surface-variant font-medium">
-                        <span>Status: {{ $statusMesin }}</span>
-                        <span>Target: {{ $activeSession ? $activeSession->formatted_target_hours : '3 Jam' }}</span>
+                        <div class="flex justify-between text-[11px] text-on-surface-variant font-medium">
+                            <span>Status: {{ $statusMesin }}</span>
+                            <span>Target: {{ $activeSession ? $activeSession->formatted_target_hours : '3 Jam' }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -144,7 +146,7 @@
             </div>            <!-- Main Chart Area -->
             <div class="bg-surface-container-lowest rounded-[20px] border border-outline-variant shadow-sm p-lg relative" id="chart-print-area">
                 <div class="hidden print-header mb-4 p-4 border-b border-gray-300">
-                    <h2 class="text-xl font-bold text-gray-900">🌽 SIDJ-Kluwih — Grafik Monitoring Suhu Smart Dryer</h2>
+                    <h2 class="text-xl font-bold text-gray-900">🌽 SIJALU-Kluwih — Grafik Monitoring Suhu Smart Dryer</h2>
                     <p class="text-xs text-gray-600">Unit Pengeringan 01 • Tanggal Cetak: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</p>
                 </div>
                 <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-lg">
@@ -179,7 +181,6 @@
                     <canvas id="tempChart"></canvas>
                 </div>
             </div>
-            </div>
 
             <!-- Machine Usage History Section (Riwayat Penggunaan Alat Lengkap) -->
             <div class="bg-surface-container-lowest rounded-[20px] border border-outline-variant shadow-sm overflow-hidden">
@@ -195,7 +196,7 @@
                     </div>
                 </div>
                 <div class="overflow-x-auto hide-scrollbar">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead class="bg-surface-container-low">
                             <tr>
                                 <th class="px-lg py-md font-label-md text-on-surface-variant">Nama Batch / Mitra</th>
@@ -433,8 +434,19 @@
             type: 'doughnut',
             data: { 
                 datasets: [{ 
-                    data: [0, MAX_TEMP], 
-                    backgroundColor: ['#0d631b', '#f1f5f9'], 
+                    @php
+                        $initVal = $currentTemperature > 70.0 ? 70.0 : $currentTemperature;
+                        $initRem = 70.0 - $initVal;
+                        
+                        $initColor = '#0d631b'; // Green
+                        if ($currentTemperature >= 60) {
+                            $initColor = '#ba1a1a'; // Red
+                        } elseif ($currentTemperature >= 55) {
+                            $initColor = '#eab308'; // Yellow
+                        }
+                    @endphp
+                    data: [{{ $initVal }}, {{ $initRem }}], 
+                    backgroundColor: ['{{ $initColor }}', '#f1f5f9'], 
                     borderWidth: 0, 
                     circumference: 180, 
                     rotation: 270, 

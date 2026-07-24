@@ -1,8 +1,7 @@
 <!-- Sidebar Navigation -->
 <aside class="w-64 h-screen flex flex-col sticky top-0 left-0 bg-surface-container-lowest border-r border-outline-variant py-lg px-md gap-sm hidden md:flex">
-    <div class="mb-xl px-md">
-        <h1 class="font-headline-md text-headline-md font-bold text-primary">SIDJ-Kluwih</h1>
-        <p class="font-label-md text-label-md text-on-surface-variant">Agri-Tech System</p>
+    <div class="mb-xl px-md flex items-center">
+        <img class="h-14 w-auto object-contain" src="{{ asset('logo.png') }}" alt="Logo SIJALU-Kluwih">
     </div>
     <nav class="flex flex-col gap-sm flex-1">
         <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'text-primary font-bold bg-secondary-container rounded-xl' : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary' }}">

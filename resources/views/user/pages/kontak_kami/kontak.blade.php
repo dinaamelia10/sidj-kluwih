@@ -1,6 +1,6 @@
 @extends('user.layout.master')
 
-@section('title', 'Hubungi Kami - SIDJ-Kluwih')
+@section('title', 'Hubungi Kami - SIJALU-Kluwih')
 
 @section('content')
     {{-- Hero Section --}}
@@ -108,7 +108,7 @@
                             </div>
                             <div>
                                 <p class="text-xs text-on-surface-variant font-medium uppercase tracking-wide">Email</p>
-                                <p class="text-sm font-semibold mt-0.5">info@sidj-kluwih.id</p>
+                                <p class="text-sm font-semibold mt-0.5">info@sijalu-kluwih.id</p>
                             </div>
                         </li>
                         <li class="flex gap-4">

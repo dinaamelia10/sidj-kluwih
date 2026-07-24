@@ -7,10 +7,32 @@ use App\Models\MarketPrice;
 use App\Models\Transaction;
 use App\Models\Petani;
 use App\Models\ContactMessage;
+use App\Models\DryingMonitor;
+use App\Models\DryingSession;
+use App\Models\Setting;
 use Carbon\Carbon;
 
 class UserController extends Controller
 {
+    private function getLatestTemperature($fallback = 30.0)
+    {
+        try {
+            $response = \Illuminate\Support\Facades\Http::withoutVerifying()
+                ->timeout(1.5)
+                ->get('https://dryerjagung-63ad6-default-rtdb.asia-southeast1.firebasedatabase.app/Suhu_Mesin/Atas.json');
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (is_array($data) && count($data) > 0) {
+                    return (float) end($data);
+                }
+            }
+        } catch (\Exception $e) {
+            // Abaikan jika terjadi kesalahan jaringan
+        }
+        return $fallback;
+    }
+
     public function beranda()
     {
         // Harga pasar terbaru untuk ditampilkan di halaman publik
@@ -21,10 +43,56 @@ class UserController extends Controller
         $totalPetani   = Petani::count();
         $totalTonnage  = Transaction::where('status', 'Selesai')->sum('tonnage');
 
+        // 1. Ambil data IoT terbaru
+        $currentTemperature = $this->getLatestTemperature(30.0);
+        $latestData = DryingMonitor::latest()->first();
+        $currentMoisture = $latestData ? $latestData->moisture : 14.0;
+        $targetMoistureSetting = (float) Setting::getVal('kadar_air_target', 15);
+
+        // 2. Sesi Aktif
+        $activeSession = DryingSession::where('status', 'Berjalan')->latest()->first();
+        
+        $activeTonnage = 0;
+        $activeBatchName = 'Tidak ada sesi';
+
+        if ($activeSession) {
+            $activeBatchName = $activeSession->batch_name;
+            
+            // Hitung estimasi kadar air
+            $durationInSeconds = $activeSession->elapsed_seconds;
+            $totalEst = $activeSession->target_seconds;
+            if ($durationInSeconds >= $totalEst) {
+                $currentMoisture = $targetMoistureSetting;
+            } else {
+                $currentMoisture = round(25.0 - (($durationInSeconds / max(1, $totalEst)) * (25.0 - $targetMoistureSetting)), 1);
+            }
+            
+            // Cari tonase dari transaksi aktif milik petani tersebut
+            $matchingTrx = Transaction::where('farmer_name', $activeSession->farmer_name)
+                ->where('status', '!=', 'Selesai')
+                ->latest()
+                ->first();
+            
+            if ($matchingTrx) {
+                $activeTonnage = $matchingTrx->tonnage;
+            } else {
+                // Fallback ke transaksi terakhir petani tersebut
+                $lastTrx = Transaction::where('farmer_name', $activeSession->farmer_name)
+                    ->latest()
+                    ->first();
+                $activeTonnage = $lastTrx ? $lastTrx->tonnage : 0;
+            }
+        }
+
         return view('user.pages.beranda.beranda', compact(
             'marketPrice',
             'totalPetani',
-            'totalTonnage'
+            'totalTonnage',
+            'currentTemperature',
+            'currentMoisture',
+            'activeSession',
+            'activeTonnage',
+            'activeBatchName'
         ));
     }
 
@@ -100,7 +168,59 @@ class UserController extends Controller
         $gradeB = number_format($basePrice * 0.92, 0, ',', '.');
         $gradeC = number_format($basePrice * 0.83, 0, ',', '.');
 
-        return view('user.pages.layanan.layanan', compact('gradeA', 'gradeB', 'gradeC'));
+        // Ambil data IoT terbaru
+        $currentTemperature = $this->getLatestTemperature(30.0);
+        $latestData = DryingMonitor::latest()->first();
+        $currentMoisture = $latestData ? $latestData->moisture : 14.0;
+        $targetMoistureSetting = (float) Setting::getVal('kadar_air_target', 15);
+
+        // Sesi Aktif
+        $activeSession = DryingSession::where('status', 'Berjalan')->latest()->first();
+        
+        $activeTonnage = 0;
+        $activeBatchName = 'Tidak ada sesi';
+        $timerString = '00:00:00';
+
+        if ($activeSession) {
+            $activeBatchName = $activeSession->batch_name;
+            $timerString = $activeSession->formatted_elapsed;
+            
+            // Hitung estimasi kadar air
+            $durationInSeconds = $activeSession->elapsed_seconds;
+            $totalEst = $activeSession->target_seconds;
+            if ($durationInSeconds >= $totalEst) {
+                $currentMoisture = $targetMoistureSetting;
+            } else {
+                $currentMoisture = round(25.0 - (($durationInSeconds / max(1, $totalEst)) * (25.0 - $targetMoistureSetting)), 1);
+            }
+            
+            // Cari tonase dari transaksi aktif milik petani tersebut
+            $matchingTrx = Transaction::where('farmer_name', $activeSession->farmer_name)
+                ->where('status', '!=', 'Selesai')
+                ->latest()
+                ->first();
+            
+            if ($matchingTrx) {
+                $activeTonnage = $matchingTrx->tonnage;
+            } else {
+                // Fallback ke transaksi terakhir petani tersebut
+                $lastTrx = Transaction::where('farmer_name', $activeSession->farmer_name)
+                    ->latest()
+                    ->first();
+                $activeTonnage = $lastTrx ? $lastTrx->tonnage : 0;
+            }
+        }
+
+        return view('user.pages.layanan.layanan', compact(
+            'gradeA', 
+            'gradeB', 
+            'gradeC',
+            'currentTemperature',
+            'currentMoisture',
+            'activeSession',
+            'activeTonnage',
+            'timerString'
+        ));
     }
 
     public function kontak()
